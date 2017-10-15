@@ -1,0 +1,6 @@
+there are a few things needed to improve:
+1. when a new testing data set comes, what if there are new words the existing model doesn't recognize? 
+2. In this case the p matrix needs to be expended and the new word needs to be put in the kth column.
+The k should be calculated according to the same rule in x_training_data = count_vector.fit_transform(X_train). 
+3. In p should I do assume p(spam|new_word) =0 p(ham|new_word) = 1?
+
