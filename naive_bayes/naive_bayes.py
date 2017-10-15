@@ -51,10 +51,6 @@ class naive_bayes_spam_filter:
         :return: prediction matrix
         """
 
-        # probability of document being classified as spam P = p(spam|w1) * p(spam|w2) * ...*p(spam|wn)
-        # log(P) = sigma(log (p(wi|spam) / (p(wi)/p(spam))
-        # but we don't know the p(wi) so approximately p(wi)/p(spam) ~= p(wi|ham)
-
         # initial reject threshold offset  = p(w|spam)/p(w|ham). reject is what can control the precision
         b = np.log(self.reject * self.p_ham / self.p_spam )
         predicts = np.full((test_data.shape[0]), -b)
