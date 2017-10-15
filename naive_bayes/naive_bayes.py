@@ -2,12 +2,32 @@
 
 import numpy as np
 import pandas as pd
-
+from sklearn.base import BaseEstimator
 
 class naive_bayes_spam_filter:
 
-    def __init__(self,training_data,labels):
 
+    def __init__(self,reject_rate=15):
+
+        self.reject = reject_rate  # initial reject rate  p(spam|x)/p(ham|x)
+
+    def get_params(self, deep=False):
+        return {'reject_rate': self.reject}
+
+    def set_params(self, dict):
+
+        if 'reject_rate' in dict:
+            self.reject = dict['reject_rate']
+
+    def fit(self, training_data, labels):
+        """
+        return matrix of spam/ham for the document
+        :param training_data: bags of words   [num_doc, num_words]  training_data[i,j] = frequency of jth word in ith document
+        :param labels:  labels [num_doc]  labels[i] = 1/0 spam /ham
+        :return self
+        """
+        # Count ham/spam occurrence of each word
+        # optimize it! very slow
         self.n_doc = training_data.shape[0]  # num of documents
         self.p_spam = np.float(np.sum(labels) / self.n_doc)
         self.p_ham = 1 - self.p_spam
@@ -21,17 +41,7 @@ class naive_bayes_spam_filter:
         self.n_w_ham =  self.n_words
         # p[0]= p(wi|spam) , p[1]= p(wi|ham)
         self.p = np.ones((2, self.n_words))
-        self.reject = 10  # initial reject rate  p(spam|x)/p(ham|x)
 
-    def fit(self, training_data, labels):
-        """
-        return matrix of spam/ham for the document
-        :param training_data: bags of words   [num_doc, num_words]  training_data[i,j] = frequency of jth word in ith document
-        :param labels:  labels [num_doc]  labels[i] = 1/0 spam /ham
-        :return self
-        """
-        # Count ham/spam occurrence of each word
-        # optimize it! very slow
         for i in range(self.n_doc):
             if labels[i] == 1:
                 self.p[0] += training_data[i]
@@ -69,6 +79,8 @@ if __name__ == "__main__":
     from sklearn.model_selection import train_test_split
     from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
     from sklearn.naive_bayes import MultinomialNB
+    from sklearn.model_selection import GridSearchCV
+    from sklearn.metrics import classification_report
 
     df = pd.read_table('smsspamcollection/SMSSpamCollection',
                        sep='\t',
@@ -79,8 +91,10 @@ if __name__ == "__main__":
     # split to training and testing set
     X_train, X_test, y_train, y_test = train_test_split(df['sms_message'],
                                                         df['label'],
+                                                        test_size = 0.25,
                                                         random_state=1)
-
+    print("Train data size: ", len(X_train))
+    print("Test data size: ", len(X_test))
     # pre-process the documents to the bags of words
     count_vector = CountVectorizer(stop_words='english')
     #Learn the vocabulary dictionary and return term-document matrix.
@@ -102,14 +116,24 @@ if __name__ == "__main__":
 
     # compare against my own
     # has to be all numpy matrix
-    spam_filter = naive_bayes_spam_filter(x_training_data, y_train.as_matrix())
+    spam_filter = naive_bayes_spam_filter()
     spam_filter.fit(x_training_data,y_train.as_matrix())
 
     predicts = spam_filter.predict(testing_data)
     print("my prediction: ", predicts)
     print('my Accuracy score: ', format(accuracy_score(y_test, predicts)))
-    print('my Precision score: ', precision_score(y_test, predicts))
+    print('my Precision score: ', format(precision_score(y_test, predicts)))
     print('my Recall score: ', format(recall_score(y_test, predicts)))
     print('my F1 score: ', format(f1_score(y_test, predicts)))
 
-
+    # explore how reject rate affects score
+    scores = ['precision', 'recall','f1_score']
+    for reject_rate in np.arange(1,15,2):
+        spam_filter = naive_bayes_spam_filter(float(reject_rate))
+        spam_filter.fit(x_training_data, y_train.as_matrix())
+        predicts = spam_filter.predict(testing_data)
+        print("reject_rate: ", reject_rate)
+        #print('accuracy score: ', format(accuracy_score(y_test, predicts)))
+        print('precision score: ', format(precision_score(y_test, predicts)))
+        print('recall score: ', format(recall_score(y_test, predicts)))
+        print('F1 score: ', format(f1_score(y_test, predicts)))
