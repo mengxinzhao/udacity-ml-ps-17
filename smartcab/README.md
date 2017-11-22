@@ -1,3 +1,8 @@
+#Homework for reinforcement
+#Need to set up for pygame
+# 1. brew install sdl sdl_image sdl_mixer sdl_ttf portmidi
+# 2. pip install pygame
+
 # Machine Learning Engineer Nanodegree
 # Reinforcement Learning
 ## Project: Train a Smartcab How to Drive
