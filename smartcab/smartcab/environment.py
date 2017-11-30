@@ -69,6 +69,8 @@ class Environment(object):
             self.roads.append(((self.bounds[0] - self.hang, y), (self.bounds[0], y)))
             self.roads.append(((self.bounds[2] + self.hang, y), (self.bounds[2], y)))    
 
+        #print(self.roads)
+        #print(self.intersections)
         # Create dummy agents
         for i in range(self.num_dummies):
             self.create_agent(DummyAgent)

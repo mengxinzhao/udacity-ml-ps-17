@@ -90,22 +90,22 @@ class Simulator(object):
         
         if self.log_metrics:
             a = self.env.primary_agent
-
+            log_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/logs"
             # Set log files
             if a.learning:
                 if self.optimized: # Whether the user is optimizing the parameters and decay functions
-                    self.log_filename = os.path.join("logs", "sim_improved-learning.csv")
-                    self.table_filename = os.path.join("logs","sim_improved-learning.txt")
+                    self.log_filename = os.path.join(log_path, "sim_improved-learning.csv")
+                    self.table_filename = os.path.join(log_path,"sim_improved-learning.txt")
                 else: 
-                    self.log_filename = os.path.join("logs", "sim_default-learning.csv")
-                    self.table_filename = os.path.join("logs","sim_default-learning.txt")
+                    self.log_filename = os.path.join(log_path, "sim_default-learning.csv")
+                    self.table_filename = os.path.join(log_path,"sim_default-learning.txt")
 
                 self.table_file = open(self.table_filename, 'wb')
             else:
-                self.log_filename = os.path.join("logs", "sim_no-learning.csv")
+                self.log_filename = os.path.join(log_path, "sim_no-learning.csv")
             
             self.log_fields = ['trial', 'testing', 'parameters', 'initial_deadline', 'final_deadline', 'net_reward', 'actions', 'success']
-            self.log_file = open(self.log_filename, 'wb')
+            self.log_file = open(self.log_filename, 'w')
             self.log_writer = csv.DictWriter(self.log_file, fieldnames=self.log_fields)
             self.log_writer.writeheader()
 
@@ -251,7 +251,7 @@ class Simulator(object):
             self.pygame.display.quit()  # shut down pygame
 
     def render_text(self, trial, testing=False):
-        """ This is the non-GUI render display of the simulation. 
+        """ This is the non-GUI render display of the simulation.
             Simulated trial data will be rendered in the terminal/command prompt. """
 
         status = self.env.step_data
