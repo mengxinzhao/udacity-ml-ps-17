@@ -47,7 +47,7 @@ class LearningAgent(Agent):
         # Update epsilon using a decay function of your choice
         # Update additional class parameters as needed
         # If 'testing' is True, set epsilon and alpha to 0
-        self.epsilon -= 0.05
+        self.epsilon -= 0.01
         if self.epsilon < 0:
             self.epsilon = 0
 
@@ -60,9 +60,11 @@ class LearningAgent(Agent):
     # waypoint has 4 possible actions [None, 'forward', 'left', 'right']
     # Inputs = {'light': 'green' or 'red', 'oncoming': 4 directions, 'right': 4 directions, 'left': 4 directions}
     # build a map from waypoint,inputs to Q.table index
-    def build_index (self, waypoint, inputs):
+    def build_index (self, inputs,waypoint = None):
 
-        state_index = (self.action_index_map[waypoint]) << 2
+        state_index = 0
+        if waypoint:
+            state_index = (self.action_index_map[waypoint]) << 2
 
         state_index += self.light_index_map[inputs['light']]
         state_index = state_index << 1
@@ -76,7 +78,7 @@ class LearningAgent(Agent):
         state_index += self.action_index_map[inputs['right']]
 
         print("state: {} {}".format(waypoint,inputs))
-        print("state index  {:d}".format(state_index))
+        #print("state index  {:d}".format(state_index))
 
         return state_index
 
@@ -103,7 +105,8 @@ class LearningAgent(Agent):
         # With the hand-engineered features, this learning process gets entirely negated.
         
         # Set 'state' as a tuple of relevant data for the agent        
-        return self.build_index(waypoint,inputs)
+        return self.build_index(inputs,waypoint)
+        #return self.build_index(inputs)
 
     def get_maxQ(self, state):
         """ The get_max_Q function is called when the agent is asked to find the
@@ -113,12 +116,30 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Calculate the maximum Q-value of all actions for a given state
-
         maxQ = 0.0
         if state in self.Q:
             maxQ = max(self.Q[self.state].values())
             print("maxQ  {:.4f} for {} ".format(maxQ,state))
         return maxQ
+
+    def get_expectedSarsa(self,state):
+        # Sum(π(a|St+1)Q(St+1, a))
+
+        expectedQ = 0.0
+        optimal_actions = []
+        max_q = -np.inf
+        if state in self.Q:
+            for action, value in iter(self.Q[state].items()):
+                if value > max_q:
+                    max_q = value
+                    optimal_actions.append(action)
+            for action,value in iter(self.Q[state].items()):
+                if action in optimal_actions:
+                    expectedQ += ((1-self.epsilon)/len(optimal_actions) + self.epsilon/4 ) * self.Q[self.state][action]
+                else:
+                    expectedQ += (self.epsilon / 4) * self.Q[self.state][action]
+
+        return expectedQ
 
 
 
@@ -158,8 +179,8 @@ class LearningAgent(Agent):
             action = np.random.choice(self.valid_actions)
             ## 4 action uniformally distributed and randomly choose one
         else:
-            # epsilon greedy explore or when there is no state entry in Q
-            if np.random.binomial(1, self.epsilon) == 1 or bool(self.Q) == False:
+            # epsilon greedy explore or when there is no state entry in Q or the state has never been visited
+            if np.random.binomial(1, self.epsilon) == 1 or not bool(self.Q):
                 action = np.random.choice(self.valid_actions)
                 print("choose random action: {}".format(action))
             else:
@@ -175,7 +196,7 @@ class LearningAgent(Agent):
         return action
 
 
-    def learn(self, state, action, reward):
+    def learn(self, state, action, reward, method = 'Q-learning'):
         """ The learn function is called after the agent completes an action and
             receives a reward. This function does not consider future rewards 
             when conducting learning. """
@@ -191,10 +212,20 @@ class LearningAgent(Agent):
             lastQ = self.Q[self.last_state][self.last_action]
         else:
             lastQ = 0.0
-        maxQ = self.get_maxQ(state)
-        if self.last_state and self.last_action:
-            self.Q[self.last_state][self.last_action] += self.alpha*(reward + maxQ - lastQ )
-            print("updating last state  {} action {} q value  {:4f}" .format(self.last_state, self.last_action,self.Q[self.last_state][self.last_action] ))
+        if method == 'Q-learning':
+            maxQ = self.get_maxQ(state)
+            # Q learning Q(S, A) ← Q(S, A) + α R + γ maxa Q(S′, a) − Q(S, A)
+            if self.last_state and self.last_action:
+                self.Q[self.last_state][self.last_action] += self.alpha*(reward + maxQ - lastQ )
+                print("Q learning updating last state  {} action {} q value  {:4f}"
+                      .format(self.last_state, self.last_action,self.Q[self.last_state][self.last_action] ))
+        elif method == 'Expected Sarsa':
+            # expected Sarsa  Q(St,At)←Q(St,At)+ alpha * Rt+1+gamma* E[Q(St+1,At+1)|St+1]−Q(St,At)
+            expectedQ = self.get_expectedSarsa(state)
+            if self.last_state and self.last_action:
+                self.Q[self.last_state][self.last_action] += self.alpha*(reward + expectedQ - lastQ )
+                print("Expected Sarsa updating last state  {} action {} q value  {:4f}"
+                      .format(self.last_state, self.last_action,self.Q[self.last_state][self.last_action] ))
 
         self.last_state =  state          # track the last state
         self.last_action = action
@@ -211,7 +242,7 @@ class LearningAgent(Agent):
         self.createQ(state)                 # Create 'state' in Q-table
         action = self.choose_action(state)  # Choose an action
         reward = self.env.act(self, action) # Receive a reward
-        self.learn(state, action, reward)   # Q-learn
+        self.learn(state, action, reward,'Expected Sarsa')   # Q-learn
 
         return
         
@@ -250,7 +281,7 @@ def run():
     #   display      - set to False to disable the GUI if PyGame is enabled
     #   log_metrics  - set to True to log trial and simulation results to /logs
     #   optimized    - set to True to change the default log file name
-    sim = Simulator(env, update_delay=0.01, display=True, log_metrics=True)
+    sim = Simulator(env, update_delay=0.01, display=True, log_metrics=True,optimized = False)
 
     ##############
     # Run the simulator
