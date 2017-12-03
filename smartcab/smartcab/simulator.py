@@ -100,7 +100,7 @@ class Simulator(object):
                     self.log_filename = os.path.join(log_path, "sim_default-learning.csv")
                     self.table_filename = os.path.join(log_path,"sim_default-learning.txt")
 
-                self.table_file = open(self.table_filename, 'wb')
+                self.table_file = open(self.table_filename, 'w')
             else:
                 self.log_filename = os.path.join(log_path, "sim_no-learning.csv")
             
@@ -237,7 +237,7 @@ class Simulator(object):
 
                 for state in a.Q:
                     f.write("{}\n".format(state))
-                    for action, reward in a.Q[state].iteritems():
+                    for action, reward in iter(a.Q[state].items()):
                         f.write(" -- {} : {:.2f}\n".format(action, reward))
                     f.write("\n")  
                 self.table_file.close()
@@ -357,7 +357,7 @@ class Simulator(object):
                 self.pygame.draw.line(self.screen, agent_color, agent_pos, state['location'], self.road_width)
             
 
-            if state['destination'] is not None:
+            if 'destination' in state.keys() and state['destination'] is not None:
                 self.screen.blit(self._logo,
                     self.pygame.rect.Rect(state['destination'][0] * self.env.block_size - self.road_width/2, \
                         state['destination'][1]*self.env.block_size - self.road_width/2, \

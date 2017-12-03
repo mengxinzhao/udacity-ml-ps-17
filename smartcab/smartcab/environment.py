@@ -34,7 +34,7 @@ class Environment(object):
 
     def __init__(self, verbose=False, num_dummies=100, grid_size = (8, 6)):
         self.num_dummies = num_dummies  # Number of dummy driver agents in the environment
-        self.verbose = verbose # If debug output should be given
+        self.verbose = True; #verbose # If debug output should be given
 
         # Initialize simulation variables
         self.done = False
@@ -45,13 +45,16 @@ class Environment(object):
 
         # Road network
         self.grid_size = grid_size  # (columns, rows)
+        #print("grid_size: ",grid_size)
         self.bounds = (1, 2, self.grid_size[0], self.grid_size[1] + 1)
+        #print("bounds: " , self.bounds)
         self.block_size = 100
         self.hang = 0.6
         self.intersections = OrderedDict()
         self.roads = []
         for x in range(self.bounds[0], self.bounds[2] + 1):
             for y in range(self.bounds[1], self.bounds[3] + 1):
+                #print("intersections: ", x,y)
                 self.intersections[(x, y)] = TrafficLight()  # A traffic light at each intersection
 
         for a in self.intersections:
@@ -60,14 +63,19 @@ class Environment(object):
                     continue
                 if (abs(a[0] - b[0]) + abs(a[1] - b[1])) == 1:  # L1 distance = 1
                     self.roads.append((a, b))
-
+                    #print("appending roads: ", (a, b))
         # Add environment boundaries
+        # what is environment boundary?
         for x in range(self.bounds[0], self.bounds[2] + 1):
             self.roads.append(((x, self.bounds[1] - self.hang), (x, self.bounds[1])))
             self.roads.append(((x, self.bounds[3] + self.hang), (x, self.bounds[3])))
+            #print("appending roads: ", ((x, self.bounds[1] - self.hang), (x, self.bounds[1])),
+            #      ((x, self.bounds[3] + self.hang), (x, self.bounds[3])))
         for y in range(self.bounds[1], self.bounds[3] + 1):
             self.roads.append(((self.bounds[0] - self.hang, y), (self.bounds[0], y)))
             self.roads.append(((self.bounds[2] + self.hang, y), (self.bounds[2], y)))    
+            #print("appending roads: ", ((self.bounds[0] - self.hang, y), (self.bounds[0], y)),
+            #      ((self.bounds[2] + self.hang, y), (self.bounds[2], y)))
 
         #print(self.roads)
         #print(self.intersections)
@@ -119,6 +127,8 @@ class Environment(object):
             traffic_light.reset()
 
         # Pick a start and a destination
+        #print("intersections:")
+        #print(self.intersections.keys())
         start = random.choice(list(self.intersections.keys()))
         destination = random.choice(list(self.intersections.keys()))
 
@@ -140,6 +150,9 @@ class Environment(object):
             for heading in self.valid_headings:
                 positions[location].append(heading)
 
+        #print("all positions:")
+        #print(positions)
+        #print(positions.keys())
         # Initialize agent(s)
         for agent in iter(self.agent_states.keys()):
 
@@ -153,18 +166,20 @@ class Environment(object):
             # For dummy agents, make them choose one of the available 
             # intersections and headings still in 'positions'
             else:
-                intersection = random.choice(list(positions.keys()))
-                heading = random.choice(positions[intersection])
-                self.agent_states[agent] = {
-                    'location': intersection,
-                    'heading': heading,
-                    'destination': None,
-                    'deadline': None
-                }
-                # Now delete the taken location and heading from 'positions'
-                positions[intersection] = list(set(positions[intersection]) - set([heading]))
-                if positions[intersection] == list(): # No headings available for intersection
-                    del positions[intersection] # Delete the intersection altogether
+                ## only when positions are not empty since it keeps deleting available positions
+                if any(positions):
+                    intersection = random.choice(list(positions.keys()))
+                    heading = random.choice(positions[intersection])
+                    self.agent_states[agent] = {
+                        'location': intersection,
+                        'heading': heading,
+                        'destination': None,
+                        'deadline': None
+                    }
+                    # Now delete the taken location and heading from 'positions'
+                    positions[intersection] = list(set(positions[intersection]) - set([heading]))
+                    if positions[intersection] == list(): # No headings available for intersection
+                        del positions[intersection] # Delete the intersection altogether
 
     
             agent.reset(destination=(destination if agent is self.primary_agent else None), testing=testing)
