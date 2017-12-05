@@ -276,6 +276,65 @@ class Environment(object):
 
         return self.agent_states[agent]['deadline'] if agent is self.primary_agent else None
 
+
+    def feedback(self, agent, state, action):
+        """
+
+        :param agent:
+        :param action:
+        :return: return whether a action causes accident
+
+        """
+        assert agent in self.agent_states, "Unknown agent!"
+        assert action in self.valid_actions, "Invalid action!"
+
+        state = self.agent_states[agent]
+        location = state['location']
+        heading = state['heading']
+        light = 'green' if (self.intersections[location].state and heading[1] != 0) or ((not self.intersections[location].state) and heading[0] != 0) else 'red'
+        inputs = self.sense(agent)
+
+
+        # Assess whether the agent can move based on the action chosen.
+        # Either the action is okay to perform, or falls under 4 types of violations:
+        # 0: Action okay
+        # 1: Minor traffic violation
+        # 2: Major traffic violation
+        # 3: Minor traffic violation causing an accident
+        # 4: Major traffic violation causing an accident
+        violation = 0
+
+        # Agent wants to drive forward:
+        if action == 'forward':
+            if light != 'green':  # Running red light
+                violation = 2  # Major violation
+                if inputs['left'] == 'forward' or inputs['right'] == 'forward':  # Cross traffic
+                    violation = 4  # Accident
+
+        # Agent wants to drive left:
+        elif action == 'left':
+            if light != 'green':  # Running a red light
+                violation = 2  # Major violation
+                if inputs['left'] == 'forward' or inputs['right'] == 'forward':  # Cross traffic
+                    violation = 4  # Accident
+                elif inputs['oncoming'] == 'right':  # Oncoming car turning right
+                    violation = 4  # Accident
+            else:  # Green light
+                if inputs['oncoming'] == 'right' or inputs['oncoming'] == 'forward':  # Incoming traffic
+                    violation = 3  # Accident
+
+        # Agent wants to drive right:
+        elif action == 'right':
+            if light != 'green' and inputs['left'] == 'forward':  # Cross traffic
+                violation = 3  # Accident
+
+        # Agent wants to perform no action:
+        elif action == None:
+            if light == 'green':
+                violation = 1  # Minor violation
+
+        return violation
+
     def act(self, agent, action):
         """ Consider an action and perform the action if it is legal.
             Receive a reward for the agent based on traffic laws. """

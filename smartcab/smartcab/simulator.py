@@ -109,6 +109,26 @@ class Simulator(object):
             self.log_writer = csv.DictWriter(self.log_file, fieldnames=self.log_fields)
             self.log_writer.writeheader()
 
+    def translate_state(self,state):
+
+        reversed_action_index_map = dict(zip([0,1,2,3],['None', 'forward', 'left', 'right']))
+        reversed_light_index_map = dict({ 0:'green',1: 'red'})
+        ##  state[1:0] = action for 'right'
+        ##  state[3:2] = action for 'left'
+        ##  state[5:4] = action for 'oncoming'
+        ##  state[6] =  color for 'light'
+        ##  state[8:7] = waypoint action
+        reversed_inputs = dict({'right':'','left':'','oncoming':'','light':''})
+        reversed_inputs['right']=reversed_action_index_map[0x3 & state]
+        reversed_inputs['left'] = reversed_action_index_map[0x3 & (state>>2)]
+        reversed_inputs['oncoming'] = reversed_action_index_map[0x3 & (state >> 4)]
+        reversed_inputs['light'] = reversed_light_index_map[0x1 & (state >> 6)]
+
+        waypoint = reversed_action_index_map[0x3 & (state >> 7)]
+
+        return (waypoint,reversed_inputs)
+
+
     def run(self, tolerance=0.05, n_test=0):
         """ Run a simulation of the environment. 
 
@@ -236,7 +256,7 @@ class Simulator(object):
                 f.write("\-----------------------------------------\n\n")
 
                 for state in a.Q:
-                    f.write("{}\n".format(state))
+                    f.write("state {:d}: {}\n".format(state, self.translate_state(state)))
                     for action, reward in iter(a.Q[state].items()):
                         f.write(" -- {} : {:.2f}\n".format(action, reward))
                     f.write("\n")  
