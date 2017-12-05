@@ -3,7 +3,7 @@ import random
 import math
 from collections import OrderedDict
 from simulator import Simulator
-
+import numpy as np
 
 class TrafficLight(object):
     """A traffic light that switches periodically."""
@@ -45,9 +45,7 @@ class Environment(object):
 
         # Road network
         self.grid_size = grid_size  # (columns, rows)
-        #print("grid_size: ",grid_size)
         self.bounds = (1, 2, self.grid_size[0], self.grid_size[1] + 1)
-        #print("bounds: " , self.bounds)
         self.block_size = 100
         self.hang = 0.6
         self.intersections = OrderedDict()
@@ -63,22 +61,17 @@ class Environment(object):
                     continue
                 if (abs(a[0] - b[0]) + abs(a[1] - b[1])) == 1:  # L1 distance = 1
                     self.roads.append((a, b))
-                    #print("appending roads: ", (a, b))
         # Add environment boundaries
         # what is environment boundary?
         for x in range(self.bounds[0], self.bounds[2] + 1):
             self.roads.append(((x, self.bounds[1] - self.hang), (x, self.bounds[1])))
             self.roads.append(((x, self.bounds[3] + self.hang), (x, self.bounds[3])))
-            #print("appending roads: ", ((x, self.bounds[1] - self.hang), (x, self.bounds[1])),
-            #      ((x, self.bounds[3] + self.hang), (x, self.bounds[3])))
+
         for y in range(self.bounds[1], self.bounds[3] + 1):
             self.roads.append(((self.bounds[0] - self.hang, y), (self.bounds[0], y)))
             self.roads.append(((self.bounds[2] + self.hang, y), (self.bounds[2], y)))    
-            #print("appending roads: ", ((self.bounds[0] - self.hang, y), (self.bounds[0], y)),
-            #      ((self.bounds[2] + self.hang, y), (self.bounds[2], y)))
 
-        #print(self.roads)
-        #print(self.intersections)
+
         # Create dummy agents
         for i in range(self.num_dummies):
             self.create_agent(DummyAgent)
@@ -127,8 +120,6 @@ class Environment(object):
             traffic_light.reset()
 
         # Pick a start and a destination
-        #print("intersections:")
-        #print(self.intersections.keys())
         start = random.choice(list(self.intersections.keys()))
         destination = random.choice(list(self.intersections.keys()))
 
@@ -150,9 +141,6 @@ class Environment(object):
             for heading in self.valid_headings:
                 positions[location].append(heading)
 
-        #print("all positions:")
-        #print(positions)
-        #print(positions.keys())
         # Initialize agent(s)
         for agent in iter(self.agent_states.keys()):
 
@@ -282,7 +270,8 @@ class Environment(object):
 
         :param agent:
         :param action:
-        :return: return whether a action causes accident
+        :return: tuple of (violation, dist_delta) under each state, action. dist_delta tells the agent if it is moving
+        close to the destination or further away
 
         """
         assert agent in self.agent_states, "Unknown agent!"
@@ -303,6 +292,7 @@ class Environment(object):
         # 3: Minor traffic violation causing an accident
         # 4: Major traffic violation causing an accident
         violation = 0
+        dist_delta = np.inf
 
         # Agent wants to drive forward:
         if action == 'forward':
@@ -322,18 +312,31 @@ class Environment(object):
             else:  # Green light
                 if inputs['oncoming'] == 'right' or inputs['oncoming'] == 'forward':  # Incoming traffic
                     violation = 3  # Accident
+                else: # Valid move!
+                    heading = (heading[1], -heading[0])
 
         # Agent wants to drive right:
         elif action == 'right':
             if light != 'green' and inputs['left'] == 'forward':  # Cross traffic
                 violation = 3  # Accident
+            else: # Valid move!
+                heading = (-heading[1], heading[0])
 
         # Agent wants to perform no action:
         elif action == None:
             if light == 'green':
                 violation = 1  # Minor violation
 
-        return violation
+        if violation == 0 :
+            if action is not None:
+                location = (
+                (location[0] + heading[0] - self.bounds[0]) % (self.bounds[2] - self.bounds[0] + 1) + self.bounds[0],
+                (location[1] + heading[1] - self.bounds[1]) % (self.bounds[3] - self.bounds[1] + 1) + self.bounds[1])  # wrap-around
+                dist_delta = self.compute_dist(location, state['destination']) - self.compute_dist(state['location'],state['destination'])
+            else:
+                dist_delta = 0
+
+        return (violation, dist_delta)
 
     def act(self, agent, action):
         """ Consider an action and perform the action if it is legal.
