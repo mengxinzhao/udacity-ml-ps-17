@@ -6,6 +6,9 @@ from environment import Agent, Environment
 from planner import RoutePlanner
 from simulator import Simulator
 from operator import itemgetter
+from sklearn.model_selection import train_test_split
+from sklearn import linear_model
+
 
 class LearningAgent(Agent):
     """ An agent that learns to drive in the Smartcab world.
@@ -28,11 +31,11 @@ class LearningAgent(Agent):
         # track the current state/action and update them once an new action
         # is taken and reward received and state changed
         # use for one step learning back-up
-        self.verbose = False
+        self.verbose = True
         self.last_state = None
         self.last_action = None
         self.last_reward = 0.0
-        self.action_index_map = dict(zip(['None', 'forward', 'left', 'right'], [0,1,2,3]))
+        self.action_index_map = dict(zip(['forward', 'left', 'right',None], [0,1,2,3]))
         self.light_index_map = dict({'green': 0, 'red': 1})
         # use for n-step learning back up
         # for the test cases, the trajectory isn't super long so I keep all the steps
@@ -49,15 +52,6 @@ class LearningAgent(Agent):
         else:
             print("epsilon",epsilon)
             self.epsilon_ceiling = epsilon
-            self.epsilon_a = 0.03
-            self.epsilon = epsilon* np.exp(-self.epsilon_a* self.trial_times)
-
-        ## init tabular Q table
-        ## only 512 states
-        for  i in range(0,512+1):
-            self.Q.update({i:{}})
-            for action in self.valid_actions:
-                self.Q[i][action] = 0.0
 
 
     def reset(self, destination=None, testing=False):
@@ -74,9 +68,14 @@ class LearningAgent(Agent):
         # Update additional class parameters as needed
         # If 'testing' is True, set epsilon and alpha to 0
         if self.epsilon_decay == 'linear':
-            self.epsilon -= 0.02
+            self.epsilon -= 0.05
         else:
-            self.epsilon =  self.epsilon_ceiling*np.exp(-self.epsilon_a * self.trial_times)
+            if self.trial_times <= 100:
+                self.epsilon =  self.epsilon_ceiling/(1 + np.exp(0.05 * (self.trial_times-100)))
+                self.alpha = 0.5  ##learng the rules more aggresively when exploring
+            else:
+                self.epsilon = 0.5 * self.epsilon_ceiling  * np.exp(-0.02 * (self.trial_times-100))
+                self.alpha = 0.2  ## tune its table slowly when exploting
         if self.epsilon < 0:
             self.epsilon = 0
 
@@ -92,25 +91,34 @@ class LearningAgent(Agent):
         self.trial_times +=1
         return None
 
-    # waypoint has 4 possible actions [None, 'forward', 'left', 'right']
+    # waypoint has 3 possible actions ['forward', 'left', 'right']
     # Inputs = {'light': 'green' or 'red', 'oncoming': 4 directions, 'right': 4 directions, 'left': 4 directions}
-    # build a map from waypoint,inputs to Q.table index
+    # build a map from (inputs, waypoint) to Q.table index
     def build_index (self, inputs,waypoint = None):
+        ##  state[1:0] = action for 'right'
+        ##  state[3:2] = action for 'left'
+        ##  state[5:4] = action for 'oncoming'
+        ##  state[6] =  color for 'light'
+        ##  state[8:7] = waypoint action
 
         state_index = 0
+
         if waypoint:
-            state_index = (self.action_index_map[waypoint]) << 2
+            state_index = (self.action_index_map[waypoint]) << 7
 
-        state_index += self.light_index_map[inputs['light']]
-        state_index = state_index << 1
+        state_index += self.light_index_map[inputs['light']]<<6
 
-        state_index += self.action_index_map[inputs['oncoming']]
-        state_index = state_index << 2
+        state_index += self.action_index_map[inputs['oncoming']]<<4
 
-        state_index += self.action_index_map[inputs['left']]
-        state_index = state_index << 2
+        state_index += self.action_index_map[inputs['left']]<<2
 
         state_index += self.action_index_map[inputs['right']]
+
+        if self.verbose:
+            if waypoint:
+                print("current state {} {}".format(state_index, (waypoint,inputs)))
+            else:
+                print("current state {} {}".format(state_index, (inputs)))
 
         return state_index
 
@@ -122,9 +130,9 @@ class LearningAgent(Agent):
         # Collect data about the environment
         waypoint = self.planner.next_waypoint() # The next waypoint 
         inputs = self.env.sense(self)           # Visual input - intersection light and traffic
-        for key, value in iter(inputs.items()):
-            if value is None:
-                inputs.update({key:'None'})
+        #for key, value in iter(inputs.items()):
+        #    if value is None:
+        #        inputs.update({key:'None'})
         deadline = self.env.get_deadline(self)  # Remaining deadline
 
         ########### 
@@ -140,7 +148,7 @@ class LearningAgent(Agent):
         return self.build_index(inputs,waypoint)
 
 
-    def get_maxQ(self, state):
+    def get_maxQ(self, state, prediction = False):
         """ The get_max_Q function is called when the agent is asked to find the
             maximum Q-value of all actions based on the 'state' the smartcab is in. """
 
@@ -151,9 +159,72 @@ class LearningAgent(Agent):
         maxQ = 0.0
         if state in self.Q:
             if self.verbose:
-                print("{}  {}".format(self.Q[self.state].items(),self.Q[self.state].values()))
-            maxQ = max(self.Q[self.state].values())
+                print("{}  {}".format(self.Q[state].items(),self.Q[state].values()))
+
+            if prediction and len(self.Q) > 100:    ## at least to have some entries
+                for action, q in iter(self.Q[state].items()):
+                    print(action, q)
+                    if q == 0.0:
+                        self.Q[state][action] = self.fit_and_predit_Q(state,action)
+            maxQ = max(self.Q[state].values())
+        else:
+            if self.verbose:
+                print("{} is never seen before ".format(state))
         return maxQ
+
+    def fit_and_predit_Q(self, state, action):
+        """
+
+        :param state:
+        :param action:
+        :return: return predicted four Q values for a unseen state using all existing table data
+        """
+        # from X  and Y for train and prediction
+        state_actions = []
+        ## It probably would go better with decision regressor with feature matrix
+        #features = []  # waypoint, light, right, left, oncoming
+        #waypoint = []
+        #light = []
+        #right = []
+        #left = []
+        #oncoming = []
+        #actions = []
+
+        Q = []
+
+        results = dict({'acc_train':0.0,'acc_test':0.0})
+        predict_Q = 0.0
+        for st,action_dict in iter(self.Q.items()):
+            #print(st,action_dict)
+            for a,q in iter(action_dict.items()):
+                if q!=0.0:
+                    state_actions.append(int(st)<<2 + self.action_index_map[a])
+                    Q.append(q)
+        #print("training X shape:", np.array(state_actions).shape)
+        #print("training Y:",np.array(Q).shape)
+        state_actions = np.array(state_actions).reshape(-1,1)
+        Q = np.array(Q).reshape(-1, 1)
+        X_train, X_test, y_train, y_test = train_test_split(state_actions,
+                                                            Q,
+                                                            test_size=0.2,
+                                                            random_state=42)
+        regr = linear_model.LinearRegression()
+        regr.fit(X_train, y_train)
+        y_predict_train = regr.predict(X_train)
+        y_predict_test = regr.predict(X_test)
+
+        # precision score
+        # sklearn doesnt support continuous accuracy_score
+        #results['acc_train'] = accuracy_score(y_train, y_predict_train)
+        #results['acc_test'] = accuracy_score(y_test, y_predict_test)
+        #print("accuracy on train data {:.4f} on test data {:.4f}".format(results['acc_train'],results['acc_test'] ))
+
+        # predict real thing
+        predict_Q = regr.predict(int(st)<<2 + self.action_index_map[action])## this is a numpy array need to be list
+        if self.verbose:
+            print("predicting :", predict_Q[0], "for action",action)
+        return float(predict_Q[0])
+
 
     def createQ(self, state):
         """ The createQ function is called when a state is generated by the agent. """
@@ -175,7 +246,7 @@ class LearningAgent(Agent):
         :param state:
         :return: return the best action in terms of q value and safety
         """
-        max_q = self.get_maxQ(state)
+        max_q = self.get_maxQ(state, True)
         optimal_actions = []
         safe_actions = {}
         best_actions = []
@@ -186,20 +257,21 @@ class LearningAgent(Agent):
         for a, v in iter(self.Q[state].items()):
             if v == max_q:
                 optimal_actions.append(a)
+
         if self.verbose:
             print("optimal action: {}".format(optimal_actions))
 
         if peek == True:
-            ## got the optimal action is it safe enough?
+            ## get feedback from the environment
             for action in self.valid_actions:
                 violation, dist_delta = self.env.feedback(self, state, action)
                 if violation == 0:
                     safe_actions.update({action: dist_delta})
 
             # sort the safe action in ascending order of dist_delta
-            # once sort it is
+            # once sort it is  list with tuples
             safe_actions= sorted(safe_actions.items(),key=itemgetter(1))
-            # list with tuples
+
             if self.verbose:
                 print("safe_actions: {}".format(safe_actions))
 
@@ -246,11 +318,11 @@ class LearningAgent(Agent):
                 if self.verbose:
                     print("choose random action: {}".format(action))
             else:
-                action = self.find_optimal_policy(state, peek=True)
+                action = self.find_optimal_policy(state, peek=False)
         return action
 
-    def QLearning(self,state, action, reward):
-        # Q learning Q(S, A) ← Q(S, A) + α [R + γ maxa Q(S′, a) − Q(S, A)]
+    def QLearning(self,state, action, reward, gamma = 0.0):
+        # Q learning Q(S, A) ← Q(S, A) + α [R + γ max Q(S′, a) − Q(S, A)]
 
         if self.last_state:
             lastQ = self.Q[self.last_state][self.last_action]
@@ -259,15 +331,23 @@ class LearningAgent(Agent):
 
         maxQ = self.get_maxQ(state)
         if self.last_state :
-            self.Q[self.last_state][self.last_action] += self.alpha * (self.last_reward  + maxQ - lastQ)
+            self.Q[self.last_state][self.last_action] += self.alpha * (self.last_reward  + gamma *  maxQ - lastQ)
             if self.verbose:
                 print("Q learning updating  state  {} action {} Q value  {:4f}"
                   .format(self.last_state, self.last_action, self.Q[self.last_state][self.last_action]))
-        self.last_state =  state          # track the last state
-        self.last_action = action
-        self.last_reward = reward
 
         return
+
+    def QLearning2(self,state, action, reward):
+        # Q learning Q(S, A) ← Q(S, A) + α [R + γ max Q(S′, a) − Q(S, A)]
+        # since gamma = 0.0 the Q learning simplified to Q(S, A) ← Q(S, A) + α [R  − Q(S, A)]
+        maxQ = self.get_maxQ(state)
+
+        self.Q[state][action] += self.alpha * (reward  - self.Q[state][action])
+        if self.verbose:
+            #print("Q learning updating  state  {} action {} Q value  {:4f}".format(state, action, self.Q[state][action]))
+            print("Q learning updating  state",state," action", action, "Q value: ", self.Q[state][action])
+
 
     def learn(self, state, action, reward, method='QLearning'):
 
@@ -280,7 +360,8 @@ class LearningAgent(Agent):
         ###########
         # When learning, implement the value iteration update rule
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
-        self.QLearning(state, action, reward)
+        #self.QLearning(state, action, reward,gamma = 0.0)
+        self.QLearning2(state, action, reward )
         return
 
 
@@ -290,7 +371,7 @@ class LearningAgent(Agent):
             state, choose an action, receive a reward, and learn if enabled. """
 
         state = self.build_state()          # Get current state
-        #self.createQ(state)                 # Create 'state' in Q-table
+        self.createQ(state)                 # Create 'state' in Q-table
         action = self.choose_action(state)  # Choose an action
         reward = self.env.act(self, action) # Receive a reward
         self.learn(state, action, reward, method ='QLearning')   # Q-learn
@@ -317,7 +398,7 @@ def run():
     #   learning   - set to True to force the driving agent to use Q-learning
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
-    agent = env.create_agent(LearningAgent,learning= True, epsilon=1.0, alpha = 0.5, epsilon_decay='exp')
+    agent = env.create_agent(LearningAgent,learning= True, epsilon=1.0, alpha = 0.2, epsilon_decay='exp')
     
     ##############
     # Follow the driving agent
@@ -339,7 +420,7 @@ def run():
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(tolerance = 0.05, n_test = 10 )
+    sim.run(tolerance = 0.02, n_test = 20 )
 
 if __name__ == '__main__':
     run()

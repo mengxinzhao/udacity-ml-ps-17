@@ -96,6 +96,8 @@ class Simulator(object):
                 if self.optimized: # Whether the user is optimizing the parameters and decay functions
                     self.log_filename = os.path.join(log_path, "sim_improved-learning.csv")
                     self.table_filename = os.path.join(log_path,"sim_improved-learning.txt")
+                    #self.log_filename = os.path.join(log_path, "sim_improved-learning_with_feedback.csv")
+                    #self.table_filename = os.path.join(log_path, "sim_improved-learning_with_feedback.txt")
                 else: 
                     self.log_filename = os.path.join(log_path, "sim_default-learning.csv")
                     self.table_filename = os.path.join(log_path,"sim_default-learning.txt")
@@ -111,19 +113,19 @@ class Simulator(object):
 
     def translate_state(self,state):
 
-        reversed_action_index_map = dict(zip([0,1,2,3],['None', 'forward', 'left', 'right']))
+        reversed_action_index_map = dict(zip([0,1,2,3],['forward', 'left', 'right',None]))
         reversed_light_index_map = dict({ 0:'green',1: 'red'})
         ##  state[1:0] = action for 'right'
         ##  state[3:2] = action for 'left'
         ##  state[5:4] = action for 'oncoming'
         ##  state[6] =  color for 'light'
         ##  state[8:7] = waypoint action
+        #print(reversed_action_index_map)
         reversed_inputs = dict({'right':'','left':'','oncoming':'','light':''})
         reversed_inputs['right']=reversed_action_index_map[0x3 & state]
         reversed_inputs['left'] = reversed_action_index_map[0x3 & (state>>2)]
         reversed_inputs['oncoming'] = reversed_action_index_map[0x3 & (state >> 4)]
         reversed_inputs['light'] = reversed_light_index_map[0x1 & (state >> 6)]
-
         waypoint = reversed_action_index_map[0x3 & (state >> 7)]
 
         return (waypoint,reversed_inputs)
