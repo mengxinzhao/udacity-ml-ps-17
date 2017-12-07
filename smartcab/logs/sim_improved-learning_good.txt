@@ -1,0 +1,2038 @@
+/-----------------------------------------
+| State-action rewards from Q-Learning
+\-----------------------------------------
+
+state 352: ('right', {'light': 'red', 'oncoming': 'right', 'right': 'forward', 'left': 'forward'})
+ -- None : 0.40
+ -- left : -6.78
+ -- forward : -7.91
+ -- right : -6.75
+
+state 364: ('right', {'light': 'red', 'oncoming': 'right', 'right': 'forward', 'left': None})
+ -- None : 1.26
+ -- left : -4.74
+ -- forward : -29.89
+ -- right : -1.72
+
+state 383: ('right', {'light': 'red', 'oncoming': None, 'right': None, 'left': None})
+ -- None : 0.48
+ -- left : -10.13
+ -- forward : -10.02
+ -- right : 1.94
+
+state 319: ('right', {'light': 'green', 'oncoming': None, 'right': None, 'left': None})
+ -- None : -5.06
+ -- left : 0.49
+ -- forward : 0.23
+ -- right : 1.81
+
+state 380: ('right', {'light': 'red', 'oncoming': None, 'right': 'forward', 'left': None})
+ -- None : 0.82
+ -- left : -25.63
+ -- forward : -38.76
+ -- right : -2.66
+
+state 127: ('forward', {'light': 'red', 'oncoming': None, 'right': None, 'left': None})
+ -- None : 2.01
+ -- left : -9.99
+ -- forward : -9.98
+ -- right : 1.09
+
+state 31: ('forward', {'light': 'green', 'oncoming': 'left', 'right': None, 'left': None})
+ -- None : -5.26
+ -- left : 0.24
+ -- forward : 1.56
+ -- right : 0.32
+
+state 63: ('forward', {'light': 'green', 'oncoming': None, 'right': None, 'left': None})
+ -- None : -4.94
+ -- left : 0.52
+ -- forward : 1.93
+ -- right : 0.76
+
+state 375: ('right', {'light': 'red', 'oncoming': None, 'right': None, 'left': 'left'})
+ -- None : 0.24
+ -- left : -10.00
+ -- forward : -9.06
+ -- right : 1.72
+
+state 370: ('right', {'light': 'red', 'oncoming': None, 'right': 'right', 'left': 'forward'})
+ -- None : 0.40
+ -- left : -5.34
+ -- forward : -19.88
+ -- right : -6.90
+
+state 356: ('right', {'light': 'red', 'oncoming': 'right', 'right': 'forward', 'left': 'left'})
+ -- None : 0.00
+ -- left : 0.00
+ -- forward : -19.53
+ -- right : 0.00
+
+state 367: ('right', {'light': 'red', 'oncoming': 'right', 'right': None, 'left': None})
+ -- None : -0.28
+ -- left : -31.41
+ -- forward : -7.98
+ -- right : 2.08
+
+state 119: ('forward', {'light': 'red', 'oncoming': None, 'right': None, 'left': 'left'})
+ -- None : 1.42
+ -- left : -7.65
+ -- forward : -9.57
+ -- right : 1.15
+
+state 252: ('left', {'light': 'red', 'oncoming': None, 'right': 'forward', 'left': None})
+ -- None : 1.81
+ -- left : -22.12
+ -- forward : -33.10
+ -- right : 0.97
+
+state 189: ('left', {'light': 'green', 'oncoming': None, 'right': 'left', 'left': None})
+ -- None : -4.84
+ -- left : 1.60
+ -- forward : 0.75
+ -- right : -0.84
+
+state 181: ('left', {'light': 'green', 'oncoming': None, 'right': 'left', 'left': 'left'})
+ -- None : -4.05
+ -- left : 1.65
+ -- forward : 1.34
+ -- right : 1.20
+
+state 65: ('forward', {'light': 'red', 'oncoming': 'forward', 'right': 'left', 'left': 'forward'})
+ -- None : -1.90
+ -- left : -34.63
+ -- forward : -20.28
+ -- right : -4.09
+
+state 78: ('forward', {'light': 'red', 'oncoming': 'forward', 'right': 'right', 'left': None})
+ -- None : 1.77
+ -- left : -8.76
+ -- forward : -5.08
+ -- right : -0.70
+
+state 7: ('forward', {'light': 'green', 'oncoming': 'forward', 'right': None, 'left': 'left'})
+ -- None : -5.53
+ -- left : -14.82
+ -- forward : 1.39
+ -- right : -2.60
+
+state 60: ('forward', {'light': 'green', 'oncoming': None, 'right': 'forward', 'left': None})
+ -- None : -5.16
+ -- left : 0.55
+ -- forward : 1.85
+ -- right : 0.65
+
+state 254: ('left', {'light': 'red', 'oncoming': None, 'right': 'right', 'left': None})
+ -- None : 2.01
+ -- left : -9.57
+ -- forward : -7.22
+ -- right : -0.32
+
+state 180: ('left', {'light': 'green', 'oncoming': None, 'right': 'forward', 'left': 'left'})
+ -- None : -2.69
+ -- left : 1.89
+ -- forward : 0.52
+ -- right : -4.46
+
+state 245: ('left', {'light': 'red', 'oncoming': None, 'right': 'left', 'left': 'left'})
+ -- None : -3.41
+ -- left : -5.85
+ -- forward : -6.14
+ -- right : 0.47
+
+state 317: ('right', {'light': 'green', 'oncoming': None, 'right': 'left', 'left': None})
+ -- None : -5.19
+ -- left : 0.66
+ -- forward : 0.51
+ -- right : 1.76
+
+state 147: ('left', {'light': 'green', 'oncoming': 'left', 'right': None, 'left': 'forward'})
+ -- None : -3.59
+ -- left : -5.20
+ -- forward : 0.68
+ -- right : -6.81
+
+state 179: ('left', {'light': 'green', 'oncoming': None, 'right': None, 'left': 'forward'})
+ -- None : -4.74
+ -- left : 2.09
+ -- forward : 1.05
+ -- right : 0.34
+
+state 353: ('right', {'light': 'red', 'oncoming': 'right', 'right': 'left', 'left': 'forward'})
+ -- None : -0.02
+ -- left : -20.01
+ -- forward : -6.06
+ -- right : -4.18
+
+state 376: ('right', {'light': 'red', 'oncoming': None, 'right': 'forward', 'left': 'right'})
+ -- None : -5.61
+ -- left : -6.55
+ -- forward : -20.14
+ -- right : 1.26
+
+state 324: ('right', {'light': 'red', 'oncoming': 'forward', 'right': 'forward', 'left': 'left'})
+ -- None : 0.00
+ -- left : -30.42
+ -- forward : 0.00
+ -- right : 0.00
+
+state 332: ('right', {'light': 'red', 'oncoming': 'forward', 'right': 'forward', 'left': None})
+ -- None : 0.04
+ -- left : -30.40
+ -- forward : -6.42
+ -- right : -1.83
+
+state 48: ('forward', {'light': 'green', 'oncoming': None, 'right': 'forward', 'left': 'forward'})
+ -- None : -5.47
+ -- left : 0.71
+ -- forward : 1.42
+ -- right : 0.60
+
+state 177: ('left', {'light': 'green', 'oncoming': None, 'right': 'left', 'left': 'forward'})
+ -- None : -3.14
+ -- left : -1.04
+ -- forward : 0.59
+ -- right : -5.12
+
+state 159: ('left', {'light': 'green', 'oncoming': 'left', 'right': None, 'left': None})
+ -- None : -4.82
+ -- left : 1.75
+ -- forward : 0.90
+ -- right : 0.36
+
+state 118: ('forward', {'light': 'red', 'oncoming': None, 'right': 'right', 'left': 'left'})
+ -- None : 0.04
+ -- left : -5.14
+ -- forward : -8.07
+ -- right : 0.32
+
+state 143: ('left', {'light': 'green', 'oncoming': 'forward', 'right': None, 'left': None})
+ -- None : -5.18
+ -- left : -19.26
+ -- forward : 0.07
+ -- right : 0.72
+
+state 371: ('right', {'light': 'red', 'oncoming': None, 'right': None, 'left': 'forward'})
+ -- None : 0.37
+ -- left : -31.49
+ -- forward : -36.12
+ -- right : -18.98
+
+state 335: ('right', {'light': 'red', 'oncoming': 'forward', 'right': None, 'left': None})
+ -- None : 1.31
+ -- left : -10.10
+ -- forward : -10.29
+ -- right : 1.71
+
+state 270: ('right', {'light': 'green', 'oncoming': 'forward', 'right': 'right', 'left': None})
+ -- None : -0.66
+ -- left : -9.66
+ -- forward : 0.79
+ -- right : -3.58
+
+state 223: ('left', {'light': 'red', 'oncoming': 'left', 'right': None, 'left': None})
+ -- None : 1.32
+ -- left : -9.69
+ -- forward : -10.33
+ -- right : 1.00
+
+state 255: ('left', {'light': 'red', 'oncoming': None, 'right': None, 'left': None})
+ -- None : 1.98
+ -- left : -10.05
+ -- forward : -9.94
+ -- right : 0.83
+
+state 191: ('left', {'light': 'green', 'oncoming': None, 'right': None, 'left': None})
+ -- None : -5.03
+ -- left : 1.60
+ -- forward : 0.42
+ -- right : 0.58
+
+state 183: ('left', {'light': 'green', 'oncoming': None, 'right': None, 'left': 'left'})
+ -- None : -4.99
+ -- left : -0.17
+ -- forward : 0.79
+ -- right : 0.99
+
+state 137: ('left', {'light': 'green', 'oncoming': 'forward', 'right': 'left', 'left': 'right'})
+ -- None : 0.00
+ -- left : 0.00
+ -- forward : 0.00
+ -- right : -0.14
+
+state 244: ('left', {'light': 'red', 'oncoming': None, 'right': 'forward', 'left': 'left'})
+ -- None : -2.56
+ -- left : -6.67
+ -- forward : -36.27
+ -- right : 0.68
+
+state 231: ('left', {'light': 'red', 'oncoming': 'right', 'right': None, 'left': 'left'})
+ -- None : -2.20
+ -- left : -29.67
+ -- forward : -8.06
+ -- right : 1.31
+
+state 196: ('left', {'light': 'red', 'oncoming': 'forward', 'right': 'forward', 'left': 'left'})
+ -- None : 0.33
+ -- left : -5.20
+ -- forward : -29.35
+ -- right : -3.76
+
+state 198: ('left', {'light': 'red', 'oncoming': 'forward', 'right': 'right', 'left': 'left'})
+ -- None : -0.37
+ -- left : -5.16
+ -- forward : -5.83
+ -- right : 0.48
+
+state 271: ('right', {'light': 'green', 'oncoming': 'forward', 'right': None, 'left': None})
+ -- None : -4.69
+ -- left : -20.16
+ -- forward : 0.61
+ -- right : 1.57
+
+state 115: ('forward', {'light': 'red', 'oncoming': None, 'right': None, 'left': 'forward'})
+ -- None : 1.92
+ -- left : -31.98
+ -- forward : -31.32
+ -- right : -17.90
+
+state 13: ('forward', {'light': 'green', 'oncoming': 'forward', 'right': 'left', 'left': None})
+ -- None : -4.25
+ -- left : -10.32
+ -- forward : -4.84
+ -- right : -2.19
+
+state 125: ('forward', {'light': 'red', 'oncoming': None, 'right': 'left', 'left': None})
+ -- None : 1.78
+ -- left : -8.64
+ -- forward : -9.91
+ -- right : 1.01
+
+state 135: ('left', {'light': 'green', 'oncoming': 'forward', 'right': None, 'left': 'left'})
+ -- None : -4.80
+ -- left : -5.92
+ -- forward : -6.36
+ -- right : -5.07
+
+state 311: ('right', {'light': 'green', 'oncoming': None, 'right': None, 'left': 'left'})
+ -- None : -3.75
+ -- left : 0.74
+ -- forward : -0.52
+ -- right : 1.46
+
+state 377: ('right', {'light': 'red', 'oncoming': None, 'right': 'left', 'left': 'right'})
+ -- None : 0.63
+ -- left : -4.62
+ -- forward : -5.93
+ -- right : -5.66
+
+state 215: ('left', {'light': 'red', 'oncoming': 'left', 'right': None, 'left': 'left'})
+ -- None : 1.73
+ -- left : -5.28
+ -- forward : -9.60
+ -- right : -2.42
+
+state 285: ('right', {'light': 'green', 'oncoming': 'left', 'right': 'left', 'left': None})
+ -- None : -3.42
+ -- left : 0.67
+ -- forward : -5.33
+ -- right : 1.21
+
+state 116: ('forward', {'light': 'red', 'oncoming': None, 'right': 'forward', 'left': 'left'})
+ -- None : -5.72
+ -- left : -5.66
+ -- forward : -23.14
+ -- right : 1.20
+
+state 103: ('forward', {'light': 'red', 'oncoming': 'right', 'right': None, 'left': 'left'})
+ -- None : -1.15
+ -- left : -4.64
+ -- forward : -4.55
+ -- right : 0.79
+
+state 351: ('right', {'light': 'red', 'oncoming': 'left', 'right': None, 'left': None})
+ -- None : 1.00
+ -- left : -9.80
+ -- forward : -9.70
+ -- right : 1.56
+
+state 287: ('right', {'light': 'green', 'oncoming': 'left', 'right': None, 'left': None})
+ -- None : -5.54
+ -- left : 1.05
+ -- forward : 0.21
+ -- right : 1.92
+
+state 339: ('right', {'light': 'red', 'oncoming': 'left', 'right': None, 'left': 'forward'})
+ -- None : 0.98
+ -- left : -22.74
+ -- forward : -19.71
+ -- right : -9.59
+
+state 344: ('right', {'light': 'red', 'oncoming': 'left', 'right': 'forward', 'left': 'right'})
+ -- None : 0.15
+ -- left : -19.79
+ -- forward : -5.87
+ -- right : -3.91
+
+state 307: ('right', {'light': 'green', 'oncoming': None, 'right': None, 'left': 'forward'})
+ -- None : -5.12
+ -- left : 0.81
+ -- forward : 0.45
+ -- right : 1.91
+
+state 243: ('left', {'light': 'red', 'oncoming': None, 'right': None, 'left': 'forward'})
+ -- None : 1.48
+ -- left : -38.70
+ -- forward : -34.41
+ -- right : -19.15
+
+state 126: ('forward', {'light': 'red', 'oncoming': None, 'right': 'right', 'left': None})
+ -- None : 1.72
+ -- left : -6.01
+ -- forward : -6.00
+ -- right : -0.93
+
+state 113: ('forward', {'light': 'red', 'oncoming': None, 'right': 'left', 'left': 'forward'})
+ -- None : 1.81
+ -- left : -5.48
+ -- forward : -35.59
+ -- right : -9.94
+
+state 47: ('forward', {'light': 'green', 'oncoming': 'right', 'right': None, 'left': None})
+ -- None : -4.27
+ -- left : -8.04
+ -- forward : 1.90
+ -- right : 0.27
+
+state 111: ('forward', {'light': 'red', 'oncoming': 'right', 'right': None, 'left': None})
+ -- None : 1.59
+ -- left : -12.27
+ -- forward : -8.81
+ -- right : -4.72
+
+state 55: ('forward', {'light': 'green', 'oncoming': None, 'right': None, 'left': 'left'})
+ -- None : -4.52
+ -- left : -0.66
+ -- forward : 1.81
+ -- right : 0.22
+
+state 11: ('forward', {'light': 'green', 'oncoming': 'forward', 'right': None, 'left': 'right'})
+ -- None : -2.98
+ -- left : -5.05
+ -- forward : -5.35
+ -- right : 0.85
+
+state 76: ('forward', {'light': 'red', 'oncoming': 'forward', 'right': 'forward', 'left': None})
+ -- None : 2.23
+ -- left : -34.78
+ -- forward : -22.47
+ -- right : -2.33
+
+state 95: ('forward', {'light': 'red', 'oncoming': 'left', 'right': None, 'left': None})
+ -- None : 1.85
+ -- left : -9.94
+ -- forward : -9.70
+ -- right : 0.62
+
+state 28: ('forward', {'light': 'green', 'oncoming': 'left', 'right': 'forward', 'left': None})
+ -- None : -2.70
+ -- left : -5.13
+ -- forward : 1.74
+ -- right : -2.92
+
+state 318: ('right', {'light': 'green', 'oncoming': None, 'right': 'right', 'left': None})
+ -- None : -3.97
+ -- left : -0.53
+ -- forward : 0.53
+ -- right : -3.38
+
+state 343: ('right', {'light': 'red', 'oncoming': 'left', 'right': None, 'left': 'left'})
+ -- None : 0.91
+ -- left : -8.13
+ -- forward : -7.18
+ -- right : 1.86
+
+state 79: ('forward', {'light': 'red', 'oncoming': 'forward', 'right': None, 'left': None})
+ -- None : 1.72
+ -- left : -9.70
+ -- forward : -9.48
+ -- right : 0.44
+
+state 15: ('forward', {'light': 'green', 'oncoming': 'forward', 'right': None, 'left': None})
+ -- None : -4.44
+ -- left : -13.49
+ -- forward : 1.83
+ -- right : 0.21
+
+state 70: ('forward', {'light': 'red', 'oncoming': 'forward', 'right': 'right', 'left': 'left'})
+ -- None : -3.60
+ -- left : -5.86
+ -- forward : -6.36
+ -- right : 0.49
+
+state 188: ('left', {'light': 'green', 'oncoming': None, 'right': 'forward', 'left': None})
+ -- None : -4.77
+ -- left : 1.99
+ -- forward : 0.50
+ -- right : 0.51
+
+state 64: ('forward', {'light': 'red', 'oncoming': 'forward', 'right': 'forward', 'left': 'forward'})
+ -- None : -2.22
+ -- left : -19.83
+ -- forward : -6.19
+ -- right : -5.02
+
+state 23: ('forward', {'light': 'green', 'oncoming': 'left', 'right': None, 'left': 'left'})
+ -- None : -4.02
+ -- left : -5.67
+ -- forward : -5.74
+ -- right : 0.55
+
+state 51: ('forward', {'light': 'green', 'oncoming': None, 'right': None, 'left': 'forward'})
+ -- None : -5.11
+ -- left : 0.41
+ -- forward : 2.03
+ -- right : 0.84
+
+state 349: ('right', {'light': 'red', 'oncoming': 'left', 'right': 'left', 'left': None})
+ -- None : 0.68
+ -- left : -9.05
+ -- forward : -4.73
+ -- right : 1.50
+
+state 156: ('left', {'light': 'green', 'oncoming': 'left', 'right': 'forward', 'left': None})
+ -- None : -3.75
+ -- left : 1.91
+ -- forward : 0.32
+ -- right : -1.55
+
+state 242: ('left', {'light': 'red', 'oncoming': None, 'right': 'right', 'left': 'forward'})
+ -- None : 1.13
+ -- left : -5.43
+ -- forward : -19.85
+ -- right : -4.19
+
+state 190: ('left', {'light': 'green', 'oncoming': None, 'right': 'right', 'left': None})
+ -- None : -1.48
+ -- left : 2.23
+ -- forward : -0.78
+ -- right : -2.93
+
+state 157: ('left', {'light': 'green', 'oncoming': 'left', 'right': 'left', 'left': None})
+ -- None : -3.23
+ -- left : -3.17
+ -- forward : -1.06
+ -- right : 0.69
+
+state 59: ('forward', {'light': 'green', 'oncoming': None, 'right': None, 'left': 'right'})
+ -- None : -3.14
+ -- left : -4.98
+ -- forward : -5.65
+ -- right : 0.57
+
+state 239: ('left', {'light': 'red', 'oncoming': 'right', 'right': None, 'left': None})
+ -- None : 1.86
+ -- left : -34.99
+ -- forward : -9.61
+ -- right : 0.43
+
+state 253: ('left', {'light': 'red', 'oncoming': None, 'right': 'left', 'left': None})
+ -- None : 1.55
+ -- left : -9.31
+ -- forward : -10.32
+ -- right : 0.66
+
+state 158: ('left', {'light': 'green', 'oncoming': 'left', 'right': 'right', 'left': None})
+ -- None : -6.37
+ -- left : 1.55
+ -- forward : 0.45
+ -- right : -6.62
+
+state 207: ('left', {'light': 'red', 'oncoming': 'forward', 'right': None, 'left': None})
+ -- None : 2.06
+ -- left : -9.97
+ -- forward : -10.25
+ -- right : 0.67
+
+state 220: ('left', {'light': 'red', 'oncoming': 'left', 'right': 'forward', 'left': None})
+ -- None : 1.66
+ -- left : -19.65
+ -- forward : -23.23
+ -- right : -0.15
+
+state 155: ('left', {'light': 'green', 'oncoming': 'left', 'right': None, 'left': 'right'})
+ -- None : -5.55
+ -- left : 1.61
+ -- forward : -0.05
+ -- right : 0.31
+
+state 275: ('right', {'light': 'green', 'oncoming': 'left', 'right': None, 'left': 'forward'})
+ -- None : 0.88
+ -- left : 0.93
+ -- forward : 0.11
+ -- right : -2.59
+
+state 316: ('right', {'light': 'green', 'oncoming': None, 'right': 'forward', 'left': None})
+ -- None : -4.31
+ -- left : 1.05
+ -- forward : -1.84
+ -- right : 1.71
+
+state 327: ('right', {'light': 'red', 'oncoming': 'forward', 'right': None, 'left': 'left'})
+ -- None : -0.07
+ -- left : -5.22
+ -- forward : -5.89
+ -- right : 1.44
+
+state 247: ('left', {'light': 'red', 'oncoming': None, 'right': None, 'left': 'left'})
+ -- None : 1.76
+ -- left : -9.48
+ -- forward : -7.34
+ -- right : 0.27
+
+state 175: ('left', {'light': 'green', 'oncoming': 'right', 'right': None, 'left': None})
+ -- None : -4.14
+ -- left : -19.30
+ -- forward : -1.13
+ -- right : 0.90
+
+state 269: ('right', {'light': 'green', 'oncoming': 'forward', 'right': 'left', 'left': None})
+ -- None : -2.56
+ -- left : -4.96
+ -- forward : -0.94
+ -- right : 1.94
+
+state 92: ('forward', {'light': 'red', 'oncoming': 'left', 'right': 'forward', 'left': None})
+ -- None : 1.60
+ -- left : -5.18
+ -- forward : -29.90
+ -- right : -0.38
+
+state 25: ('forward', {'light': 'green', 'oncoming': 'left', 'right': 'left', 'left': 'right'})
+ -- None : -5.44
+ -- left : -5.84
+ -- forward : 1.14
+ -- right : -5.68
+
+state 87: ('forward', {'light': 'red', 'oncoming': 'left', 'right': None, 'left': 'left'})
+ -- None : -3.47
+ -- left : -6.91
+ -- forward : -4.98
+ -- right : 0.45
+
+state 182: ('left', {'light': 'green', 'oncoming': None, 'right': 'right', 'left': 'left'})
+ -- None : -1.88
+ -- left : 1.11
+ -- forward : -4.84
+ -- right : -3.52
+
+state 305: ('right', {'light': 'green', 'oncoming': None, 'right': 'left', 'left': 'forward'})
+ -- None : -4.24
+ -- left : -0.41
+ -- forward : 0.33
+ -- right : 2.14
+
+state 381: ('right', {'light': 'red', 'oncoming': None, 'right': 'left', 'left': None})
+ -- None : 0.89
+ -- left : -10.15
+ -- forward : -10.40
+ -- right : 1.77
+
+state 284: ('right', {'light': 'green', 'oncoming': 'left', 'right': 'forward', 'left': None})
+ -- None : -3.87
+ -- left : 0.32
+ -- forward : -2.53
+ -- right : -2.94
+
+state 308: ('right', {'light': 'green', 'oncoming': None, 'right': 'forward', 'left': 'left'})
+ -- None : -2.15
+ -- left : -1.15
+ -- forward : -0.41
+ -- right : 1.76
+
+state 4: ('forward', {'light': 'green', 'oncoming': 'forward', 'right': 'forward', 'left': 'left'})
+ -- None : -4.11
+ -- left : -5.96
+ -- forward : -6.02
+ -- right : -5.65
+
+state 229: ('left', {'light': 'red', 'oncoming': 'right', 'right': 'left', 'left': 'left'})
+ -- None : -1.35
+ -- left : -20.27
+ -- forward : -5.58
+ -- right : -3.82
+
+state 365: ('right', {'light': 'red', 'oncoming': 'right', 'right': 'left', 'left': None})
+ -- None : 0.79
+ -- left : -19.89
+ -- forward : -6.97
+ -- right : -2.15
+
+state 382: ('right', {'light': 'red', 'oncoming': None, 'right': 'right', 'left': None})
+ -- None : 0.53
+ -- left : -6.38
+ -- forward : -4.43
+ -- right : 1.55
+
+state 209: ('left', {'light': 'red', 'oncoming': 'left', 'right': 'left', 'left': 'forward'})
+ -- None : 1.14
+ -- left : -4.38
+ -- forward : -5.00
+ -- right : -12.14
+
+state 372: ('right', {'light': 'red', 'oncoming': None, 'right': 'forward', 'left': 'left'})
+ -- None : 0.56
+ -- left : -20.34
+ -- forward : -25.99
+ -- right : -0.77
+
+state 62: ('forward', {'light': 'green', 'oncoming': None, 'right': 'right', 'left': None})
+ -- None : -4.76
+ -- left : 0.68
+ -- forward : -3.54
+ -- right : -1.49
+
+state 374: ('right', {'light': 'red', 'oncoming': None, 'right': 'right', 'left': 'left'})
+ -- None : 0.96
+ -- left : -7.46
+ -- forward : -4.66
+ -- right : 0.03
+
+state 359: ('right', {'light': 'red', 'oncoming': 'right', 'right': None, 'left': 'left'})
+ -- None : 1.03
+ -- left : -11.31
+ -- forward : -4.93
+ -- right : 0.76
+
+state 369: ('right', {'light': 'red', 'oncoming': None, 'right': 'left', 'left': 'forward'})
+ -- None : 1.02
+ -- left : -36.26
+ -- forward : -22.42
+ -- right : -15.35
+
+state 379: ('right', {'light': 'red', 'oncoming': None, 'right': None, 'left': 'right'})
+ -- None : 0.82
+ -- left : -9.88
+ -- forward : -8.85
+ -- right : -0.59
+
+state 99: ('forward', {'light': 'red', 'oncoming': 'right', 'right': None, 'left': 'forward'})
+ -- None : -1.84
+ -- left : -5.26
+ -- forward : -23.22
+ -- right : -15.35
+
+state 293: ('right', {'light': 'green', 'oncoming': 'right', 'right': 'left', 'left': 'left'})
+ -- None : -0.60
+ -- left : -4.52
+ -- forward : -5.13
+ -- right : 1.25
+
+state 124: ('forward', {'light': 'red', 'oncoming': None, 'right': 'forward', 'left': None})
+ -- None : 2.11
+ -- left : -23.03
+ -- forward : -36.12
+ -- right : -1.74
+
+state 219: ('left', {'light': 'red', 'oncoming': 'left', 'right': None, 'left': 'right'})
+ -- None : 0.30
+ -- left : -9.16
+ -- forward : -7.95
+ -- right : 0.87
+
+state 348: ('right', {'light': 'red', 'oncoming': 'left', 'right': 'forward', 'left': None})
+ -- None : 0.20
+ -- left : -35.95
+ -- forward : -30.01
+ -- right : 1.59
+
+state 286: ('right', {'light': 'green', 'oncoming': 'left', 'right': 'right', 'left': None})
+ -- None : -3.90
+ -- left : -2.07
+ -- forward : -2.09
+ -- right : 1.49
+
+state 281: ('right', {'light': 'green', 'oncoming': 'left', 'right': 'left', 'left': 'right'})
+ -- None : -3.48
+ -- left : -4.40
+ -- forward : -4.95
+ -- right : -3.29
+
+state 309: ('right', {'light': 'green', 'oncoming': None, 'right': 'left', 'left': 'left'})
+ -- None : -4.16
+ -- left : 1.06
+ -- forward : -0.41
+ -- right : 0.12
+
+state 61: ('forward', {'light': 'green', 'oncoming': None, 'right': 'left', 'left': None})
+ -- None : -5.03
+ -- left : 0.85
+ -- forward : 1.80
+ -- right : -2.34
+
+state 123: ('forward', {'light': 'red', 'oncoming': None, 'right': None, 'left': 'right'})
+ -- None : 1.59
+ -- left : -9.68
+ -- forward : -6.77
+ -- right : -0.35
+
+state 66: ('forward', {'light': 'red', 'oncoming': 'forward', 'right': 'right', 'left': 'forward'})
+ -- None : 1.04
+ -- left : -5.06
+ -- forward : -12.21
+ -- right : -4.89
+
+state 110: ('forward', {'light': 'red', 'oncoming': 'right', 'right': 'right', 'left': None})
+ -- None : 1.27
+ -- left : -5.09
+ -- forward : -5.18
+ -- right : -1.95
+
+state 12: ('forward', {'light': 'green', 'oncoming': 'forward', 'right': 'forward', 'left': None})
+ -- None : -4.36
+ -- left : -16.14
+ -- forward : -5.49
+ -- right : -5.47
+
+state 199: ('left', {'light': 'red', 'oncoming': 'forward', 'right': None, 'left': 'left'})
+ -- None : 1.42
+ -- left : -5.17
+ -- forward : -7.56
+ -- right : -1.43
+
+state 204: ('left', {'light': 'red', 'oncoming': 'forward', 'right': 'forward', 'left': None})
+ -- None : 1.03
+ -- left : -35.27
+ -- forward : -5.13
+ -- right : -3.93
+
+state 193: ('left', {'light': 'red', 'oncoming': 'forward', 'right': 'left', 'left': 'forward'})
+ -- None : -2.47
+ -- left : -30.27
+ -- forward : -5.12
+ -- right : -12.48
+
+state 205: ('left', {'light': 'red', 'oncoming': 'forward', 'right': 'left', 'left': None})
+ -- None : 1.31
+ -- left : -9.39
+ -- forward : -9.27
+ -- right : -0.84
+
+state 238: ('left', {'light': 'red', 'oncoming': 'right', 'right': 'right', 'left': None})
+ -- None : 1.03
+ -- left : -4.53
+ -- forward : -5.36
+ -- right : -3.66
+
+state 334: ('right', {'light': 'red', 'oncoming': 'forward', 'right': 'right', 'left': None})
+ -- None : 1.22
+ -- left : -4.18
+ -- forward : -4.79
+ -- right : 1.24
+
+state 262: ('right', {'light': 'green', 'oncoming': 'forward', 'right': 'right', 'left': 'left'})
+ -- None : -1.21
+ -- left : -17.53
+ -- forward : -5.20
+ -- right : -3.50
+
+state 263: ('right', {'light': 'green', 'oncoming': 'forward', 'right': None, 'left': 'left'})
+ -- None : -4.04
+ -- left : -4.63
+ -- forward : -5.24
+ -- right : -1.87
+
+state 195: ('left', {'light': 'red', 'oncoming': 'forward', 'right': None, 'left': 'forward'})
+ -- None : 1.33
+ -- left : -30.88
+ -- forward : -31.61
+ -- right : -3.87
+
+state 315: ('right', {'light': 'green', 'oncoming': None, 'right': None, 'left': 'right'})
+ -- None : -0.54
+ -- left : -4.44
+ -- forward : -1.77
+ -- right : 1.63
+
+state 53: ('forward', {'light': 'green', 'oncoming': None, 'right': 'left', 'left': 'left'})
+ -- None : -4.88
+ -- left : 0.47
+ -- forward : -3.09
+ -- right : -5.36
+
+state 83: ('forward', {'light': 'red', 'oncoming': 'left', 'right': None, 'left': 'forward'})
+ -- None : 1.50
+ -- left : -12.41
+ -- forward : -30.18
+ -- right : -5.14
+
+state 91: ('forward', {'light': 'red', 'oncoming': 'left', 'right': None, 'left': 'right'})
+ -- None : -3.02
+ -- left : -5.40
+ -- forward : -7.66
+ -- right : 0.74
+
+state 241: ('left', {'light': 'red', 'oncoming': None, 'right': 'left', 'left': 'forward'})
+ -- None : 1.54
+ -- left : -22.43
+ -- forward : -22.96
+ -- right : -18.65
+
+state 249: ('left', {'light': 'red', 'oncoming': None, 'right': 'left', 'left': 'right'})
+ -- None : -0.09
+ -- left : -4.84
+ -- forward : -6.29
+ -- right : -2.74
+
+state 24: ('forward', {'light': 'green', 'oncoming': 'left', 'right': 'forward', 'left': 'right'})
+ -- None : -5.33
+ -- left : 0.65
+ -- forward : -5.79
+ -- right : -5.43
+
+state 57: ('forward', {'light': 'green', 'oncoming': None, 'right': 'left', 'left': 'right'})
+ -- None : -4.67
+ -- left : -0.18
+ -- forward : -1.80
+ -- right : 0.75
+
+state 341: ('right', {'light': 'red', 'oncoming': 'left', 'right': 'left', 'left': 'left'})
+ -- None : 0.44
+ -- left : -4.09
+ -- forward : -5.78
+ -- right : -2.64
+
+state 304: ('right', {'light': 'green', 'oncoming': None, 'right': 'forward', 'left': 'forward'})
+ -- None : -0.39
+ -- left : -4.39
+ -- forward : 0.90
+ -- right : 0.49
+
+state 89: ('forward', {'light': 'red', 'oncoming': 'left', 'right': 'left', 'left': 'right'})
+ -- None : -4.20
+ -- left : -7.73
+ -- forward : -5.51
+ -- right : 1.05
+
+state 80: ('forward', {'light': 'red', 'oncoming': 'left', 'right': 'forward', 'left': 'forward'})
+ -- None : 1.71
+ -- left : -5.44
+ -- forward : -5.59
+ -- right : -5.02
+
+state 86: ('forward', {'light': 'red', 'oncoming': 'left', 'right': 'right', 'left': 'left'})
+ -- None : -4.25
+ -- left : -5.40
+ -- forward : -5.61
+ -- right : 0.73
+
+state 167: ('left', {'light': 'green', 'oncoming': 'right', 'right': None, 'left': 'left'})
+ -- None : -4.01
+ -- left : -5.03
+ -- forward : 0.20
+ -- right : -3.16
+
+state 112: ('forward', {'light': 'red', 'oncoming': None, 'right': 'forward', 'left': 'forward'})
+ -- None : 1.43
+ -- left : -5.41
+ -- forward : -5.61
+ -- right : -15.02
+
+state 132: ('left', {'light': 'green', 'oncoming': 'forward', 'right': 'forward', 'left': 'left'})
+ -- None : -3.38
+ -- left : -5.24
+ -- forward : -0.03
+ -- right : -2.19
+
+state 187: ('left', {'light': 'green', 'oncoming': None, 'right': None, 'left': 'right'})
+ -- None : -3.92
+ -- left : -4.99
+ -- forward : -2.40
+ -- right : 0.63
+
+state 268: ('right', {'light': 'green', 'oncoming': 'forward', 'right': 'forward', 'left': None})
+ -- None : -2.59
+ -- left : -4.70
+ -- forward : -2.42
+ -- right : 2.09
+
+state 85: ('forward', {'light': 'red', 'oncoming': 'left', 'right': 'left', 'left': 'left'})
+ -- None : -4.24
+ -- left : -5.53
+ -- forward : -5.69
+ -- right : 0.69
+
+state 77: ('forward', {'light': 'red', 'oncoming': 'forward', 'right': 'left', 'left': None})
+ -- None : 1.91
+ -- left : -8.95
+ -- forward : -5.71
+ -- right : -1.95
+
+state 54: ('forward', {'light': 'green', 'oncoming': None, 'right': 'right', 'left': 'left'})
+ -- None : -2.26
+ -- left : -5.69
+ -- forward : 1.15
+ -- right : -5.41
+
+state 251: ('left', {'light': 'red', 'oncoming': None, 'right': None, 'left': 'right'})
+ -- None : -0.89
+ -- left : -9.24
+ -- forward : -7.26
+ -- right : 0.41
+
+state 303: ('right', {'light': 'green', 'oncoming': 'right', 'right': None, 'left': None})
+ -- None : -2.47
+ -- left : -13.59
+ -- forward : 0.16
+ -- right : -3.13
+
+state 56: ('forward', {'light': 'green', 'oncoming': None, 'right': 'forward', 'left': 'right'})
+ -- None : -4.95
+ -- left : 0.46
+ -- forward : -5.95
+ -- right : -2.47
+
+state 289: ('right', {'light': 'green', 'oncoming': 'right', 'right': 'left', 'left': 'forward'})
+ -- None : -0.52
+ -- left : -12.02
+ -- forward : -2.14
+ -- right : 0.67
+
+state 67: ('forward', {'light': 'red', 'oncoming': 'forward', 'right': None, 'left': 'forward'})
+ -- None : 1.22
+ -- left : -12.62
+ -- forward : -26.36
+ -- right : -10.17
+
+state 176: ('left', {'light': 'green', 'oncoming': None, 'right': 'forward', 'left': 'forward'})
+ -- None : -4.61
+ -- left : -0.10
+ -- forward : 0.86
+ -- right : -4.40
+
+state 211: ('left', {'light': 'red', 'oncoming': 'left', 'right': None, 'left': 'forward'})
+ -- None : 1.26
+ -- left : -31.10
+ -- forward : -22.58
+ -- right : -16.18
+
+state 128: ('left', {'light': 'green', 'oncoming': 'forward', 'right': 'forward', 'left': 'forward'})
+ -- None : -3.14
+ -- left : -5.60
+ -- forward : -5.66
+ -- right : -4.96
+
+state 240: ('left', {'light': 'red', 'oncoming': None, 'right': 'forward', 'left': 'forward'})
+ -- None : 1.06
+ -- left : -4.59
+ -- forward : -12.34
+ -- right : -12.12
+
+state 373: ('right', {'light': 'red', 'oncoming': None, 'right': 'left', 'left': 'left'})
+ -- None : 0.91
+ -- left : -6.84
+ -- forward : -5.02
+ -- right : -2.35
+
+state 278: ('right', {'light': 'green', 'oncoming': 'left', 'right': 'right', 'left': 'left'})
+ -- None : -0.79
+ -- left : -4.56
+ -- forward : 0.22
+ -- right : -3.31
+
+state 273: ('right', {'light': 'green', 'oncoming': 'left', 'right': 'left', 'left': 'forward'})
+ -- None : -3.13
+ -- left : 0.55
+ -- forward : -2.12
+ -- right : -0.87
+
+state 32: ('forward', {'light': 'green', 'oncoming': 'right', 'right': 'forward', 'left': 'forward'})
+ -- None : -5.44
+ -- left : -5.74
+ -- forward : -2.14
+ -- right : 0.28
+
+state 172: ('left', {'light': 'green', 'oncoming': 'right', 'right': 'forward', 'left': None})
+ -- None : -3.39
+ -- left : -12.60
+ -- forward : -5.37
+ -- right : -4.31
+
+state 208: ('left', {'light': 'red', 'oncoming': 'left', 'right': 'forward', 'left': 'forward'})
+ -- None : 0.45
+ -- left : -4.83
+ -- forward : -22.76
+ -- right : -9.92
+
+state 217: ('left', {'light': 'red', 'oncoming': 'left', 'right': 'left', 'left': 'right'})
+ -- None : 1.57
+ -- left : -4.88
+ -- forward : -5.44
+ -- right : -3.86
+
+state 173: ('left', {'light': 'green', 'oncoming': 'right', 'right': 'left', 'left': None})
+ -- None : -3.53
+ -- left : -5.11
+ -- forward : -2.48
+ -- right : 1.25
+
+state 100: ('forward', {'light': 'red', 'oncoming': 'right', 'right': 'forward', 'left': 'left'})
+ -- None : -4.17
+ -- left : -20.43
+ -- forward : -5.78
+ -- right : -4.99
+
+state 350: ('right', {'light': 'red', 'oncoming': 'left', 'right': 'right', 'left': None})
+ -- None : 0.87
+ -- left : -7.18
+ -- forward : -8.18
+ -- right : 1.46
+
+state 185: ('left', {'light': 'green', 'oncoming': None, 'right': 'left', 'left': 'right'})
+ -- None : -2.95
+ -- left : 0.43
+ -- forward : -5.57
+ -- right : 0.86
+
+state 301: ('right', {'light': 'green', 'oncoming': 'right', 'right': 'left', 'left': None})
+ -- None : -2.26
+ -- left : -4.38
+ -- forward : -2.49
+ -- right : -2.23
+
+state 39: ('forward', {'light': 'green', 'oncoming': 'right', 'right': None, 'left': 'left'})
+ -- None : -4.95
+ -- left : -5.59
+ -- forward : -5.75
+ -- right : 0.24
+
+state 133: ('left', {'light': 'green', 'oncoming': 'forward', 'right': 'left', 'left': 'left'})
+ -- None : -3.41
+ -- left : -5.26
+ -- forward : -5.53
+ -- right : 0.56
+
+state 93: ('forward', {'light': 'red', 'oncoming': 'left', 'right': 'left', 'left': None})
+ -- None : 1.85
+ -- left : -7.94
+ -- forward : -6.54
+ -- right : -2.09
+
+state 19: ('forward', {'light': 'green', 'oncoming': 'left', 'right': None, 'left': 'forward'})
+ -- None : -5.44
+ -- left : -2.08
+ -- forward : 1.46
+ -- right : -5.59
+
+state 222: ('left', {'light': 'red', 'oncoming': 'left', 'right': 'right', 'left': None})
+ -- None : 1.53
+ -- left : -8.93
+ -- forward : -5.24
+ -- right : -1.63
+
+state 151: ('left', {'light': 'green', 'oncoming': 'left', 'right': None, 'left': 'left'})
+ -- None : -5.23
+ -- left : 1.43
+ -- forward : -5.44
+ -- right : -4.58
+
+state 117: ('forward', {'light': 'red', 'oncoming': None, 'right': 'left', 'left': 'left'})
+ -- None : 1.96
+ -- left : -4.57
+ -- forward : -7.82
+ -- right : -4.79
+
+state 300: ('right', {'light': 'green', 'oncoming': 'right', 'right': 'forward', 'left': None})
+ -- None : -3.25
+ -- left : -4.59
+ -- forward : -5.15
+ -- right : -2.26
+
+state 323: ('right', {'light': 'red', 'oncoming': 'forward', 'right': None, 'left': 'forward'})
+ -- None : 0.45
+ -- left : -4.49
+ -- forward : -20.21
+ -- right : -2.93
+
+state 326: ('right', {'light': 'red', 'oncoming': 'forward', 'right': 'right', 'left': 'left'})
+ -- None : 0.21
+ -- left : -4.43
+ -- forward : -8.14
+ -- right : -2.88
+
+state 192: ('left', {'light': 'red', 'oncoming': 'forward', 'right': 'forward', 'left': 'forward'})
+ -- None : -0.28
+ -- left : -5.05
+ -- forward : -5.60
+ -- right : -10.41
+
+state 246: ('left', {'light': 'red', 'oncoming': None, 'right': 'right', 'left': 'left'})
+ -- None : 0.70
+ -- left : -5.00
+ -- forward : -5.63
+ -- right : -2.10
+
+state 235: ('left', {'light': 'red', 'oncoming': 'right', 'right': None, 'left': 'right'})
+ -- None : 1.05
+ -- left : -5.03
+ -- forward : -7.34
+ -- right : -3.84
+
+state 140: ('left', {'light': 'green', 'oncoming': 'forward', 'right': 'forward', 'left': None})
+ -- None : -3.91
+ -- left : -12.87
+ -- forward : 0.69
+ -- right : -4.74
+
+state 248: ('left', {'light': 'red', 'oncoming': None, 'right': 'forward', 'left': 'right'})
+ -- None : 1.20
+ -- left : -4.95
+ -- forward : -5.51
+ -- right : -3.66
+
+state 210: ('left', {'light': 'red', 'oncoming': 'left', 'right': 'right', 'left': 'forward'})
+ -- None : -2.09
+ -- left : -4.96
+ -- forward : -5.52
+ -- right : -10.34
+
+state 221: ('left', {'light': 'red', 'oncoming': 'left', 'right': 'left', 'left': None})
+ -- None : 1.39
+ -- left : -5.12
+ -- forward : -7.47
+ -- right : -1.60
+
+state 368: ('right', {'light': 'red', 'oncoming': None, 'right': 'forward', 'left': 'forward'})
+ -- None : 0.72
+ -- left : -21.80
+ -- forward : -12.20
+ -- right : -14.67
+
+state 161: ('left', {'light': 'green', 'oncoming': 'right', 'right': 'left', 'left': 'forward'})
+ -- None : -2.96
+ -- left : -5.30
+ -- forward : -5.72
+ -- right : 0.80
+
+state 141: ('left', {'light': 'green', 'oncoming': 'forward', 'right': 'left', 'left': None})
+ -- None : -3.78
+ -- left : -17.48
+ -- forward : -5.86
+ -- right : -0.94
+
+state 30: ('forward', {'light': 'green', 'oncoming': 'left', 'right': 'right', 'left': None})
+ -- None : -5.64
+ -- left : 0.61
+ -- forward : -1.63
+ -- right : -5.94
+
+state 120: ('forward', {'light': 'red', 'oncoming': None, 'right': 'forward', 'left': 'right'})
+ -- None : 0.47
+ -- left : -20.43
+ -- forward : -6.14
+ -- right : -5.02
+
+state 337: ('right', {'light': 'red', 'oncoming': 'left', 'right': 'left', 'left': 'forward'})
+ -- None : 0.55
+ -- left : -4.65
+ -- forward : -5.48
+ -- right : -14.78
+
+state 114: ('forward', {'light': 'red', 'oncoming': None, 'right': 'right', 'left': 'forward'})
+ -- None : -3.11
+ -- left : -5.90
+ -- forward : -23.17
+ -- right : -12.20
+
+state 283: ('right', {'light': 'green', 'oncoming': 'left', 'right': None, 'left': 'right'})
+ -- None : -3.54
+ -- left : 0.79
+ -- forward : -5.72
+ -- right : -3.55
+
+state 250: ('left', {'light': 'red', 'oncoming': None, 'right': 'right', 'left': 'right'})
+ -- None : -1.44
+ -- left : -5.05
+ -- forward : -5.77
+ -- right : 0.13
+
+state 22: ('forward', {'light': 'green', 'oncoming': 'left', 'right': 'right', 'left': 'left'})
+ -- None : -5.71
+ -- left : 0.05
+ -- forward : -6.12
+ -- right : -5.94
+
+state 108: ('forward', {'light': 'red', 'oncoming': 'right', 'right': 'forward', 'left': None})
+ -- None : 1.65
+ -- left : -22.41
+ -- forward : -12.91
+ -- right : -5.15
+
+state 29: ('forward', {'light': 'green', 'oncoming': 'left', 'right': 'left', 'left': None})
+ -- None : -5.79
+ -- left : -6.29
+ -- forward : 2.03
+ -- right : -6.19
+
+state 274: ('right', {'light': 'green', 'oncoming': 'left', 'right': 'right', 'left': 'forward'})
+ -- None : -3.73
+ -- left : -4.92
+ -- forward : -5.85
+ -- right : -0.99
+
+state 325: ('right', {'light': 'red', 'oncoming': 'forward', 'right': 'left', 'left': 'left'})
+ -- None : 0.27
+ -- left : -4.95
+ -- forward : -4.50
+ -- right : -3.28
+
+state 232: ('left', {'light': 'red', 'oncoming': 'right', 'right': 'forward', 'left': 'right'})
+ -- None : -1.72
+ -- left : -20.12
+ -- forward : -5.80
+ -- right : -3.94
+
+state 72: ('forward', {'light': 'red', 'oncoming': 'forward', 'right': 'forward', 'left': 'right'})
+ -- None : 1.23
+ -- left : -6.08
+ -- forward : -6.12
+ -- right : -5.73
+
+state 134: ('left', {'light': 'green', 'oncoming': 'forward', 'right': 'right', 'left': 'left'})
+ -- None : -3.69
+ -- left : -5.81
+ -- forward : -6.29
+ -- right : -5.13
+
+state 0: ('forward', {'light': 'green', 'oncoming': 'forward', 'right': 'forward', 'left': 'forward'})
+ -- None : -2.66
+ -- left : -6.36
+ -- forward : -2.45
+ -- right : -6.31
+
+state 139: ('left', {'light': 'green', 'oncoming': 'forward', 'right': None, 'left': 'right'})
+ -- None : -4.15
+ -- left : -10.38
+ -- forward : 0.13
+ -- right : -2.02
+
+state 142: ('left', {'light': 'green', 'oncoming': 'forward', 'right': 'right', 'left': None})
+ -- None : -3.40
+ -- left : -5.70
+ -- forward : -5.95
+ -- right : 0.85
+
+state 73: ('forward', {'light': 'red', 'oncoming': 'forward', 'right': 'left', 'left': 'right'})
+ -- None : -1.24
+ -- left : -6.28
+ -- forward : -5.29
+ -- right : -2.85
+
+state 366: ('right', {'light': 'red', 'oncoming': 'right', 'right': 'right', 'left': None})
+ -- None : 0.18
+ -- left : -20.25
+ -- forward : -5.64
+ -- right : -2.75
+
+state 94: ('forward', {'light': 'red', 'oncoming': 'left', 'right': 'right', 'left': None})
+ -- None : -0.82
+ -- left : -7.75
+ -- forward : -8.93
+ -- right : -5.63
+
+state 71: ('forward', {'light': 'red', 'oncoming': 'forward', 'right': None, 'left': 'left'})
+ -- None : -5.12
+ -- left : -6.19
+ -- forward : -6.50
+ -- right : 0.71
+
+state 267: ('right', {'light': 'green', 'oncoming': 'forward', 'right': None, 'left': 'right'})
+ -- None : -2.97
+ -- left : -8.03
+ -- forward : -5.63
+ -- right : 1.24
+
+state 43: ('forward', {'light': 'green', 'oncoming': 'right', 'right': None, 'left': 'right'})
+ -- None : -5.62
+ -- left : -6.37
+ -- forward : 1.42
+ -- right : -6.19
+
+state 328: ('right', {'light': 'red', 'oncoming': 'forward', 'right': 'forward', 'left': 'right'})
+ -- None : 0.01
+ -- left : -5.04
+ -- forward : -5.84
+ -- right : 1.33
+
+state 153: ('left', {'light': 'green', 'oncoming': 'left', 'right': 'left', 'left': 'right'})
+ -- None : -2.20
+ -- left : -5.78
+ -- forward : -6.29
+ -- right : -5.09
+
+state 171: ('left', {'light': 'green', 'oncoming': 'right', 'right': None, 'left': 'right'})
+ -- None : -3.04
+ -- left : -10.25
+ -- forward : -5.99
+ -- right : -4.74
+
+state 131: ('left', {'light': 'green', 'oncoming': 'forward', 'right': None, 'left': 'forward'})
+ -- None : -4.13
+ -- left : -5.65
+ -- forward : -2.41
+ -- right : 1.07
+
+state 50: ('forward', {'light': 'green', 'oncoming': None, 'right': 'right', 'left': 'forward'})
+ -- None : -3.83
+ -- left : -5.94
+ -- forward : -6.13
+ -- right : -5.70
+
+state 34: ('forward', {'light': 'green', 'oncoming': 'right', 'right': 'right', 'left': 'forward'})
+ -- None : -5.68
+ -- left : -6.09
+ -- forward : 0.71
+ -- right : -6.12
+
+state 107: ('forward', {'light': 'red', 'oncoming': 'right', 'right': None, 'left': 'right'})
+ -- None : -4.35
+ -- left : -6.15
+ -- forward : -6.42
+ -- right : -0.00
+
+state 237: ('left', {'light': 'red', 'oncoming': 'right', 'right': 'left', 'left': None})
+ -- None : 1.95
+ -- left : -12.14
+ -- forward : -6.09
+ -- right : -4.25
+
+state 129: ('left', {'light': 'green', 'oncoming': 'forward', 'right': 'left', 'left': 'forward'})
+ -- None : -3.90
+ -- left : -12.57
+ -- forward : -4.81
+ -- right : 0.19
+
+state 184: ('left', {'light': 'green', 'oncoming': None, 'right': 'forward', 'left': 'right'})
+ -- None : -2.86
+ -- left : -5.62
+ -- forward : -6.09
+ -- right : 0.51
+
+state 361: ('right', {'light': 'red', 'oncoming': 'right', 'right': 'left', 'left': 'right'})
+ -- None : 0.84
+ -- left : -4.71
+ -- forward : -5.67
+ -- right : 1.23
+
+state 347: ('right', {'light': 'red', 'oncoming': 'left', 'right': None, 'left': 'right'})
+ -- None : 0.73
+ -- left : -4.84
+ -- forward : -5.24
+ -- right : -3.02
+
+state 144: ('left', {'light': 'green', 'oncoming': 'left', 'right': 'forward', 'left': 'forward'})
+ -- None : -3.63
+ -- left : -5.84
+ -- forward : 1.16
+ -- right : -5.10
+
+state 261: ('right', {'light': 'green', 'oncoming': 'forward', 'right': 'left', 'left': 'left'})
+ -- None : -1.14
+ -- left : -5.26
+ -- forward : -5.84
+ -- right : 1.07
+
+state 227: ('left', {'light': 'red', 'oncoming': 'right', 'right': None, 'left': 'forward'})
+ -- None : -1.23
+ -- left : -5.44
+ -- forward : -6.00
+ -- right : -15.22
+
+state 9: ('forward', {'light': 'green', 'oncoming': 'forward', 'right': 'left', 'left': 'right'})
+ -- None : -6.37
+ -- left : -6.35
+ -- forward : -6.54
+ -- right : 0.38
+
+state 378: ('right', {'light': 'red', 'oncoming': None, 'right': 'right', 'left': 'right'})
+ -- None : 1.30
+ -- left : -4.61
+ -- forward : -4.91
+ -- right : -2.72
+
+state 257: ('right', {'light': 'green', 'oncoming': 'forward', 'right': 'left', 'left': 'forward'})
+ -- None : -2.75
+ -- left : -12.45
+ -- forward : -5.82
+ -- right : -2.69
+
+state 90: ('forward', {'light': 'red', 'oncoming': 'left', 'right': 'right', 'left': 'right'})
+ -- None : -4.70
+ -- left : -6.02
+ -- forward : -6.25
+ -- right : 0.17
+
+state 121: ('forward', {'light': 'red', 'oncoming': None, 'right': 'left', 'left': 'right'})
+ -- None : -4.05
+ -- left : -6.48
+ -- forward : -6.19
+ -- right : 0.60
+
+state 266: ('right', {'light': 'green', 'oncoming': 'forward', 'right': 'right', 'left': 'right'})
+ -- None : -1.37
+ -- left : -10.29
+ -- forward : -5.96
+ -- right : -3.91
+
+state 136: ('left', {'light': 'green', 'oncoming': 'forward', 'right': 'forward', 'left': 'right'})
+ -- None : -2.77
+ -- left : -5.83
+ -- forward : -6.12
+ -- right : -5.08
+
+state 313: ('right', {'light': 'green', 'oncoming': None, 'right': 'left', 'left': 'right'})
+ -- None : -2.89
+ -- left : -3.80
+ -- forward : -0.67
+ -- right : -3.43
+
+state 69: ('forward', {'light': 'red', 'oncoming': 'forward', 'right': 'left', 'left': 'left'})
+ -- None : 1.52
+ -- left : -6.96
+ -- forward : -6.38
+ -- right : -5.97
+
+state 321: ('right', {'light': 'red', 'oncoming': 'forward', 'right': 'left', 'left': 'forward'})
+ -- None : -0.11
+ -- left : -30.30
+ -- forward : -5.67
+ -- right : -6.77
+
+state 224: ('left', {'light': 'red', 'oncoming': 'right', 'right': 'forward', 'left': 'forward'})
+ -- None : -1.44
+ -- left : -20.07
+ -- forward : -5.93
+ -- right : -4.25
+
+state 145: ('left', {'light': 'green', 'oncoming': 'left', 'right': 'left', 'left': 'forward'})
+ -- None : -4.38
+ -- left : -5.87
+ -- forward : 0.43
+ -- right : -5.04
+
+state 214: ('left', {'light': 'red', 'oncoming': 'left', 'right': 'right', 'left': 'left'})
+ -- None : 1.20
+ -- left : -5.40
+ -- forward : -5.99
+ -- right : -4.42
+
+state 212: ('left', {'light': 'red', 'oncoming': 'left', 'right': 'forward', 'left': 'left'})
+ -- None : -0.27
+ -- left : -5.46
+ -- forward : -20.44
+ -- right : -4.40
+
+state 150: ('left', {'light': 'green', 'oncoming': 'left', 'right': 'right', 'left': 'left'})
+ -- None : -3.55
+ -- left : -2.48
+ -- forward : 0.56
+ -- right : -5.09
+
+state 342: ('right', {'light': 'red', 'oncoming': 'left', 'right': 'right', 'left': 'left'})
+ -- None : 0.60
+ -- left : -4.89
+ -- forward : -5.81
+ -- right : 0.55
+
+state 314: ('right', {'light': 'green', 'oncoming': None, 'right': 'right', 'left': 'right'})
+ -- None : -0.36
+ -- left : 0.45
+ -- forward : -5.79
+ -- right : -3.44
+
+state 36: ('forward', {'light': 'green', 'oncoming': 'right', 'right': 'forward', 'left': 'left'})
+ -- None : -3.45
+ -- left : -9.24
+ -- forward : -6.61
+ -- right : -6.22
+
+state 333: ('right', {'light': 'red', 'oncoming': 'forward', 'right': 'left', 'left': None})
+ -- None : 0.75
+ -- left : -5.71
+ -- forward : -9.29
+ -- right : -3.32
+
+state 101: ('forward', {'light': 'red', 'oncoming': 'right', 'right': 'left', 'left': 'left'})
+ -- None : -4.51
+ -- left : -6.00
+ -- forward : -7.72
+ -- right : 0.60
+
+state 58: ('forward', {'light': 'green', 'oncoming': None, 'right': 'right', 'left': 'right'})
+ -- None : -5.43
+ -- left : 0.47
+ -- forward : -6.36
+ -- right : -6.02
+
+state 363: ('right', {'light': 'red', 'oncoming': 'right', 'right': None, 'left': 'right'})
+ -- None : 0.50
+ -- left : -4.85
+ -- forward : -5.43
+ -- right : -3.01
+
+state 272: ('right', {'light': 'green', 'oncoming': 'left', 'right': 'forward', 'left': 'forward'})
+ -- None : -4.10
+ -- left : -5.34
+ -- forward : -4.45
+ -- right : -3.96
+
+state 21: ('forward', {'light': 'green', 'oncoming': 'left', 'right': 'left', 'left': 'left'})
+ -- None : -6.27
+ -- left : 0.75
+ -- forward : -6.71
+ -- right : -3.39
+
+state 52: ('forward', {'light': 'green', 'oncoming': None, 'right': 'forward', 'left': 'left'})
+ -- None : -5.15
+ -- left : 0.90
+ -- forward : -6.54
+ -- right : -2.59
+
+state 297: ('right', {'light': 'green', 'oncoming': 'right', 'right': 'left', 'left': 'right'})
+ -- None : -0.61
+ -- left : -5.01
+ -- forward : 0.81
+ -- right : -3.59
+
+state 163: ('left', {'light': 'green', 'oncoming': 'right', 'right': None, 'left': 'forward'})
+ -- None : -3.60
+ -- left : -9.54
+ -- forward : -6.34
+ -- right : -4.98
+
+state 279: ('right', {'light': 'green', 'oncoming': 'left', 'right': None, 'left': 'left'})
+ -- None : -4.50
+ -- left : -4.38
+ -- forward : -2.41
+ -- right : -1.49
+
+state 280: ('right', {'light': 'green', 'oncoming': 'left', 'right': 'forward', 'left': 'right'})
+ -- None : -0.97
+ -- left : -5.22
+ -- forward : -5.98
+ -- right : 1.08
+
+state 96: ('forward', {'light': 'red', 'oncoming': 'right', 'right': 'forward', 'left': 'forward'})
+ -- None : -3.50
+ -- left : -6.24
+ -- forward : -19.80
+ -- right : -5.71
+
+state 27: ('forward', {'light': 'green', 'oncoming': 'left', 'right': None, 'left': 'right'})
+ -- None : -5.96
+ -- left : 0.66
+ -- forward : -6.67
+ -- right : -6.63
+
+state 299: ('right', {'light': 'green', 'oncoming': 'right', 'right': None, 'left': 'right'})
+ -- None : -3.96
+ -- left : -5.32
+ -- forward : -6.09
+ -- right : -3.73
+
+state 259: ('right', {'light': 'green', 'oncoming': 'forward', 'right': None, 'left': 'forward'})
+ -- None : -3.14
+ -- left : -5.53
+ -- forward : -6.26
+ -- right : 1.43
+
+state 276: ('right', {'light': 'green', 'oncoming': 'left', 'right': 'forward', 'left': 'left'})
+ -- None : -1.15
+ -- left : 0.31
+ -- forward : -6.05
+ -- right : -3.98
+
+state 45: ('forward', {'light': 'green', 'oncoming': 'right', 'right': 'left', 'left': None})
+ -- None : -3.10
+ -- left : -6.45
+ -- forward : -6.68
+ -- right : -6.24
+
+state 203: ('left', {'light': 'red', 'oncoming': 'forward', 'right': None, 'left': 'right'})
+ -- None : 0.81
+ -- left : -5.53
+ -- forward : -5.39
+ -- right : -4.80
+
+state 44: ('forward', {'light': 'green', 'oncoming': 'right', 'right': 'forward', 'left': None})
+ -- None : -5.86
+ -- left : -6.38
+ -- forward : -6.44
+ -- right : 0.74
+
+state 310: ('right', {'light': 'green', 'oncoming': None, 'right': 'right', 'left': 'left'})
+ -- None : -0.50
+ -- left : 0.52
+ -- forward : -5.83
+ -- right : -3.59
+
+state 16: ('forward', {'light': 'green', 'oncoming': 'left', 'right': 'forward', 'left': 'forward'})
+ -- None : -6.66
+ -- left : -6.61
+ -- forward : 1.16
+ -- right : -6.53
+
+state 291: ('right', {'light': 'green', 'oncoming': 'right', 'right': None, 'left': 'forward'})
+ -- None : -2.70
+ -- left : -5.30
+ -- forward : -6.16
+ -- right : -3.83
+
+state 75: ('forward', {'light': 'red', 'oncoming': 'forward', 'right': None, 'left': 'right'})
+ -- None : 0.22
+ -- left : -6.35
+ -- forward : -6.46
+ -- right : -5.92
+
+state 109: ('forward', {'light': 'red', 'oncoming': 'right', 'right': 'left', 'left': None})
+ -- None : 0.99
+ -- left : -6.15
+ -- forward : -6.33
+ -- right : -5.50
+
+state 160: ('left', {'light': 'green', 'oncoming': 'right', 'right': 'forward', 'left': 'forward'})
+ -- None : -3.30
+ -- left : -5.84
+ -- forward : -6.13
+ -- right : -5.10
+
+state 20: ('forward', {'light': 'green', 'oncoming': 'left', 'right': 'forward', 'left': 'left'})
+ -- None : -5.20
+ -- left : -6.76
+ -- forward : -6.85
+ -- right : -6.70
+
+state 1: ('forward', {'light': 'green', 'oncoming': 'forward', 'right': 'left', 'left': 'forward'})
+ -- None : -6.82
+ -- left : -9.67
+ -- forward : 0.42
+ -- right : -6.63
+
+state 302: ('right', {'light': 'green', 'oncoming': 'right', 'right': 'right', 'left': None})
+ -- None : -0.48
+ -- left : -5.18
+ -- forward : 0.21
+ -- right : -3.75
+
+state 306: ('right', {'light': 'green', 'oncoming': None, 'right': 'right', 'left': 'forward'})
+ -- None : -3.11
+ -- left : -5.08
+ -- forward : -5.82
+ -- right : -3.59
+
+state 236: ('left', {'light': 'red', 'oncoming': 'right', 'right': 'forward', 'left': None})
+ -- None : 0.23
+ -- left : -5.38
+ -- forward : -5.98
+ -- right : -4.25
+
+state 234: ('left', {'light': 'red', 'oncoming': 'right', 'right': 'right', 'left': 'right'})
+ -- None : -1.09
+ -- left : -5.43
+ -- forward : -6.11
+ -- right : -4.27
+
+state 295: ('right', {'light': 'green', 'oncoming': 'right', 'right': None, 'left': 'left'})
+ -- None : -0.71
+ -- left : -5.04
+ -- forward : -0.01
+ -- right : -3.69
+
+state 336: ('right', {'light': 'red', 'oncoming': 'left', 'right': 'forward', 'left': 'forward'})
+ -- None : 0.23
+ -- left : -4.90
+ -- forward : -5.72
+ -- right : -3.87
+
+state 68: ('forward', {'light': 'red', 'oncoming': 'forward', 'right': 'forward', 'left': 'left'})
+ -- None : -5.21
+ -- left : -6.22
+ -- forward : -6.40
+ -- right : 0.18
+
+state 148: ('left', {'light': 'green', 'oncoming': 'left', 'right': 'forward', 'left': 'left'})
+ -- None : -4.00
+ -- left : -5.86
+ -- forward : -6.32
+ -- right : -5.14
+
+state 277: ('right', {'light': 'green', 'oncoming': 'left', 'right': 'left', 'left': 'left'})
+ -- None : -2.34
+ -- left : -5.25
+ -- forward : -4.67
+ -- right : -3.84
+
+state 18: ('forward', {'light': 'green', 'oncoming': 'left', 'right': 'right', 'left': 'forward'})
+ -- None : -6.37
+ -- left : -6.48
+ -- forward : -6.48
+ -- right : -3.74
+
+state 17: ('forward', {'light': 'green', 'oncoming': 'left', 'right': 'left', 'left': 'forward'})
+ -- None : -6.21
+ -- left : -6.59
+ -- forward : 0.98
+ -- right : -6.48
+
+state 225: ('left', {'light': 'red', 'oncoming': 'right', 'right': 'left', 'left': 'forward'})
+ -- None : -1.38
+ -- left : -5.60
+ -- forward : -6.18
+ -- right : -4.45
+
+state 228: ('left', {'light': 'red', 'oncoming': 'right', 'right': 'forward', 'left': 'left'})
+ -- None : -1.28
+ -- left : -5.67
+ -- forward : -6.29
+ -- right : -4.28
+
+state 331: ('right', {'light': 'red', 'oncoming': 'forward', 'right': None, 'left': 'right'})
+ -- None : 0.39
+ -- left : -5.07
+ -- forward : -6.61
+ -- right : -3.39
+
+state 35: ('forward', {'light': 'green', 'oncoming': 'right', 'right': None, 'left': 'forward'})
+ -- None : -0.96
+ -- left : -9.48
+ -- forward : -6.72
+ -- right : -6.43
+
+state 260: ('right', {'light': 'green', 'oncoming': 'forward', 'right': 'forward', 'left': 'left'})
+ -- None : -2.76
+ -- left : -5.43
+ -- forward : -6.11
+ -- right : -4.08
+
+state 122: ('forward', {'light': 'red', 'oncoming': None, 'right': 'right', 'left': 'right'})
+ -- None : -1.25
+ -- left : -6.13
+ -- forward : -6.42
+ -- right : -5.37
+
+state 152: ('left', {'light': 'green', 'oncoming': 'left', 'right': 'forward', 'left': 'right'})
+ -- None : -3.78
+ -- left : -5.92
+ -- forward : -6.31
+ -- right : -5.14
+
+state 81: ('forward', {'light': 'red', 'oncoming': 'left', 'right': 'left', 'left': 'forward'})
+ -- None : -2.62
+ -- left : -6.22
+ -- forward : -6.43
+ -- right : -5.94
+
+state 49: ('forward', {'light': 'green', 'oncoming': None, 'right': 'left', 'left': 'forward'})
+ -- None : -5.32
+ -- left : -0.02
+ -- forward : -6.50
+ -- right : -6.09
+
+state 14: ('forward', {'light': 'green', 'oncoming': 'forward', 'right': 'right', 'left': None})
+ -- None : -6.38
+ -- left : -6.66
+ -- forward : 0.60
+ -- right : -6.52
+
+state 206: ('left', {'light': 'red', 'oncoming': 'forward', 'right': 'right', 'left': None})
+ -- None : 0.98
+ -- left : -5.70
+ -- forward : -6.38
+ -- right : -4.70
+
+state 106: ('forward', {'light': 'red', 'oncoming': 'right', 'right': 'right', 'left': 'right'})
+ -- None : -3.24
+ -- left : -6.32
+ -- forward : -6.67
+ -- right : -5.78
+
+state 360: ('right', {'light': 'red', 'oncoming': 'right', 'right': 'forward', 'left': 'right'})
+ -- None : 0.89
+ -- left : -4.92
+ -- forward : -5.85
+ -- right : -3.02
+
+state 320: ('right', {'light': 'red', 'oncoming': 'forward', 'right': 'forward', 'left': 'forward'})
+ -- None : -0.03
+ -- left : -8.18
+ -- forward : -6.10
+ -- right : -3.46
+
+state 294: ('right', {'light': 'green', 'oncoming': 'right', 'right': 'right', 'left': 'left'})
+ -- None : -0.55
+ -- left : -3.94
+ -- forward : -5.99
+ -- right : -3.72
+
+state 33: ('forward', {'light': 'green', 'oncoming': 'right', 'right': 'left', 'left': 'forward'})
+ -- None : -5.59
+ -- left : -6.57
+ -- forward : -6.71
+ -- right : -6.44
+
+state 41: ('forward', {'light': 'green', 'oncoming': 'right', 'right': 'left', 'left': 'right'})
+ -- None : -5.81
+ -- left : -6.57
+ -- forward : -6.60
+ -- right : -6.36
+
+state 97: ('forward', {'light': 'red', 'oncoming': 'right', 'right': 'left', 'left': 'forward'})
+ -- None : -3.44
+ -- left : -6.16
+ -- forward : -6.40
+ -- right : -5.71
+
+state 3: ('forward', {'light': 'green', 'oncoming': 'forward', 'right': None, 'left': 'forward'})
+ -- None : -6.81
+ -- left : -6.87
+ -- forward : -0.21
+ -- right : -6.73
+
+state 5: ('forward', {'light': 'green', 'oncoming': 'forward', 'right': 'left', 'left': 'left'})
+ -- None : -6.71
+ -- left : -6.74
+ -- forward : -6.76
+ -- right : -5.29
+
+state 264: ('right', {'light': 'green', 'oncoming': 'forward', 'right': 'forward', 'left': 'right'})
+ -- None : -2.07
+ -- left : -5.31
+ -- forward : -6.01
+ -- right : -3.89
+
+state 74: ('forward', {'light': 'red', 'oncoming': 'forward', 'right': 'right', 'left': 'right'})
+ -- None : -3.66
+ -- left : -6.29
+ -- forward : -6.49
+ -- right : -5.92
+
+state 290: ('right', {'light': 'green', 'oncoming': 'right', 'right': 'right', 'left': 'forward'})
+ -- None : -1.49
+ -- left : -5.19
+ -- forward : -5.91
+ -- right : -3.70
+
+state 130: ('left', {'light': 'green', 'oncoming': 'forward', 'right': 'right', 'left': 'forward'})
+ -- None : -0.83
+ -- left : -6.07
+ -- forward : -6.37
+ -- right : -5.29
+
+state 178: ('left', {'light': 'green', 'oncoming': None, 'right': 'right', 'left': 'forward'})
+ -- None : -3.30
+ -- left : -5.78
+ -- forward : -6.23
+ -- right : -5.02
+
+state 282: ('right', {'light': 'green', 'oncoming': 'left', 'right': 'right', 'left': 'right'})
+ -- None : -1.68
+ -- left : -5.14
+ -- forward : -5.98
+ -- right : -3.75
+
+state 146: ('left', {'light': 'green', 'oncoming': 'left', 'right': 'right', 'left': 'forward'})
+ -- None : -3.93
+ -- left : -5.80
+ -- forward : -6.24
+ -- right : -5.13
+
+state 2: ('forward', {'light': 'green', 'oncoming': 'forward', 'right': 'right', 'left': 'forward'})
+ -- None : -6.69
+ -- left : -9.25
+ -- forward : -6.65
+ -- right : -6.62
+
+state 194: ('left', {'light': 'red', 'oncoming': 'forward', 'right': 'right', 'left': 'forward'})
+ -- None : -1.21
+ -- left : -5.75
+ -- forward : -6.23
+ -- right : -4.70
+
+state 346: ('right', {'light': 'red', 'oncoming': 'left', 'right': 'right', 'left': 'right'})
+ -- None : 0.40
+ -- left : -4.90
+ -- forward : -5.77
+ -- right : -3.14
+
+state 340: ('right', {'light': 'red', 'oncoming': 'left', 'right': 'forward', 'left': 'left'})
+ -- None : 0.57
+ -- left : -4.94
+ -- forward : -5.80
+ -- right : -3.22
+
+state 213: ('left', {'light': 'red', 'oncoming': 'left', 'right': 'left', 'left': 'left'})
+ -- None : -1.05
+ -- left : -5.63
+ -- forward : -6.23
+ -- right : -4.53
+
+state 296: ('right', {'light': 'green', 'oncoming': 'right', 'right': 'forward', 'left': 'right'})
+ -- None : -1.47
+ -- left : -5.22
+ -- forward : -6.03
+ -- right : -3.68
+
+state 102: ('forward', {'light': 'red', 'oncoming': 'right', 'right': 'right', 'left': 'left'})
+ -- None : -3.26
+ -- left : -6.13
+ -- forward : -6.39
+ -- right : -5.61
+
+state 174: ('left', {'light': 'green', 'oncoming': 'right', 'right': 'right', 'left': None})
+ -- None : -3.30
+ -- left : -5.89
+ -- forward : -6.41
+ -- right : -5.02
+
+state 186: ('left', {'light': 'green', 'oncoming': None, 'right': 'right', 'left': 'right'})
+ -- None : -3.44
+ -- left : -5.87
+ -- forward : -6.15
+ -- right : -4.79
+
+state 200: ('left', {'light': 'red', 'oncoming': 'forward', 'right': 'forward', 'left': 'right'})
+ -- None : -1.61
+ -- left : -5.71
+ -- forward : -6.20
+ -- right : -4.69
+
+state 202: ('left', {'light': 'red', 'oncoming': 'forward', 'right': 'right', 'left': 'right'})
+ -- None : -1.82
+ -- left : -5.67
+ -- forward : -6.21
+ -- right : -4.64
+
+state 345: ('right', {'light': 'red', 'oncoming': 'left', 'right': 'left', 'left': 'right'})
+ -- None : 0.48
+ -- left : -4.94
+ -- forward : -5.83
+ -- right : -3.17
+
+state 37: ('forward', {'light': 'green', 'oncoming': 'right', 'right': 'left', 'left': 'left'})
+ -- None : -5.71
+ -- left : -6.51
+ -- forward : -6.60
+ -- right : -6.27
+
+state 288: ('right', {'light': 'green', 'oncoming': 'right', 'right': 'forward', 'left': 'forward'})
+ -- None : -1.76
+ -- left : -5.23
+ -- forward : -6.11
+ -- right : -3.86
+
+state 149: ('left', {'light': 'green', 'oncoming': 'left', 'right': 'left', 'left': 'left'})
+ -- None : -3.84
+ -- left : -5.99
+ -- forward : -6.32
+ -- right : -5.13
+
