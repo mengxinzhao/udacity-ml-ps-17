@@ -34,13 +34,14 @@ class LearningAgent(Agent):
         self.light_index_map = dict({'green': 0, 'red': 1})
         self.t = 0  # time steps
         self.trial_times = 0
-
         self.epsilon_decay = epsilon_decay
+
         if self.epsilon_decay == 'linear':
             self.epsilon = 1.0
         else:
-            print("epsilon", epsilon)
             self.epsilon_ceiling = epsilon
+
+
 
     def reset(self, destination=None, testing=False):
         """ The reset function is called at the beginning of each trial.
@@ -183,6 +184,9 @@ class LearningAgent(Agent):
 
         regr.fit(X_train, y_train)
 
+        if self.verbose:
+            print("DT tree feature importance", regr.feature_importances_)
+
         feature_test = np.array(((state >> 7) & 0x3, (state >> 6) & 0x1, (state >> 4) & 0x3, (state >> 2) & 0x3, \
                                  state & 0x3, self.action_index_map[action])).reshape(1, 6)
 
@@ -251,7 +255,7 @@ class LearningAgent(Agent):
                 self.Q[state][action] = 0.0
         return
 
-    def find_optimal_policy(self, state, peek=False):
+    def find_optimal_action(self, state, peek=False):
         """
         :param state:
         :return: return the best action in terms of q value and safety
@@ -268,6 +272,8 @@ class LearningAgent(Agent):
         for a, v in iter(self.Q[state].items()):
             if v == max_q:
                 optimal_actions.append(a)
+
+        ##actions = [act for act, val in self.Q[state].items() if val == max_q]
 
         if self.verbose:
             print("optimal action: {}".format(optimal_actions))
@@ -329,10 +335,21 @@ class LearningAgent(Agent):
                 if self.verbose:
                     print("choose random action: {}".format(action))
             else:
-                action = self.find_optimal_policy(state, peek=False)
+                action = self.find_optimal_action(state, peek=False)
         return action
 
-    def QLearning(self, state, action, reward):
+    def learn(self, state, action, reward):
+
+        """ The learn function is called after the agent completes an action and
+            receives a reward. This function does not consider future rewards 
+            when conducting learning. """
+
+        ########### 
+        ## TO DO ##
+        ###########
+        # When learning, implement the value iteration update rule
+        #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
+
         # Q learning Q(S, A) ← Q(S, A) + α [R + γ max Q(S′, a) − Q(S, A)]
         # since gamma = 0.0 the Q learning simplified to Q(S, A) ← Q(S, A) + α [R  − Q(S, A)]
         maxQ = self.get_maxQ(state)
@@ -348,19 +365,6 @@ class LearningAgent(Agent):
                 ## predict
                 # self.Q[state][act] = self.fit_and_predit_Linear(state, act)
                 self.Q[state][act] = self.fit_and_predit_DT(state, act)
-
-    def learn(self, state, action, reward, method='QLearning'):
-
-        """ The learn function is called after the agent completes an action and
-            receives a reward. This function does not consider future rewards 
-            when conducting learning. """
-
-        ########### 
-        ## TO DO ##
-        ###########
-        # When learning, implement the value iteration update rule
-        #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
-        self.QLearning(state, action, reward)
         return
 
     def update(self):
@@ -372,7 +376,7 @@ class LearningAgent(Agent):
         self.createQ(state)  # Create 'state' in Q-table
         action = self.choose_action(state)  # Choose an action
         reward = self.env.act(self, action)  # Receive a reward
-        self.learn(state, action, reward, method='QLearning')  # Q-learn
+        self.learn(state, action, reward)  # Q-learn
 
         return
 
