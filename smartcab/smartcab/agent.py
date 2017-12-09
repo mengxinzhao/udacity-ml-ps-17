@@ -21,8 +21,9 @@ class LearningAgent(Agent):
         self.valid_actions = self.env.valid_actions  # The set of valid actions
 
         # Set parameters of the learning agent
-        self.learning = learning  # Whether the agent is expected to learn
-        self.Q = OrderedDict()
+        self.learning = learning
+        if self.learning:
+            self.Q = OrderedDict()
         self.alpha = alpha  # Learning factor
 
         ###########
@@ -36,12 +37,11 @@ class LearningAgent(Agent):
         self.trial_times = 0
         self.epsilon_decay = epsilon_decay
 
-        if self.epsilon_decay == 'linear':
+        if self.epsilon_decay == 'linear' or not self.learning:
             self.epsilon = 1.0
         else:
             self.epsilon_ceiling = epsilon
-
-
+        self.pred_thres = int(384 * 0.80)  # 80% the table filled
 
     def reset(self, destination=None, testing=False):
         """ The reset function is called at the beginning of each trial.
@@ -56,15 +56,19 @@ class LearningAgent(Agent):
         # Update epsilon using a decay function of your choice
         # Update additional class parameters as needed
         # If 'testing' is True, set epsilon and alpha to 0
-        if self.epsilon_decay == 'linear':
+        if not self.learning or self.epsilon_decay == 'linear':
             self.epsilon -= 0.05
         else:
             if self.trial_times <= 100:
-                self.epsilon = self.epsilon_ceiling / (1 + np.exp(0.05 * (self.trial_times - 100)))
-                self.alpha = 0.5  ##learng the rules more aggresively when exploring
+                # learng the rules  aggresively when exploring
+                self.epsilon = self.epsilon_ceiling / (1 + np.exp(0.09 * (self.trial_times - 100)))
+                self.alpha = 0.5
             else:
-                self.epsilon = 0.5 * self.epsilon_ceiling * np.exp(-0.02 * (self.trial_times - 100))
-                self.alpha = 0.2  ## tune its table slowly when exploting
+                # tune its table slowly when exploiting
+                self.epsilon = 0.5 * self.epsilon_ceiling * np.exp(-0.03 * (self.trial_times - 100))
+                # learning rate decays as agent more confident in driving on its own and stablize Q
+                self.alpha = 0.2
+
         if self.epsilon < 0:
             self.epsilon = 0
 
@@ -142,7 +146,7 @@ class LearningAgent(Agent):
             if self.verbose:
                 print("{}  {}".format(self.Q[state].items(), self.Q[state].values()))
 
-            if prediction and len(self.Q) > 100:  ## at least to have some entries
+            if prediction and len(self.Q) > self.pred_thres:  ## at least to have some entries
                 for action, q in iter(self.Q[state].items()):
                     if q == 0.0:
                         # self.Q[state][action] = self.fit_and_predit_Linear(state,action)
@@ -249,7 +253,7 @@ class LearningAgent(Agent):
         # When learning, check if the 'state' is not in the Q-table
         # If it is not, create a new dictionary for that state
         #   Then, for each action available, set the initial Q-value to 0
-        if not state in self.Q:
+        if self.learning and not state in self.Q:
             self.Q.update({state: {}})
             for action in self.valid_actions:
                 self.Q[state][action] = 0.0
@@ -269,11 +273,7 @@ class LearningAgent(Agent):
         if self.verbose:
             print("action values {} in state {}".format(self.Q[state], state))
 
-        for a, v in iter(self.Q[state].items()):
-            if v == max_q:
-                optimal_actions.append(a)
-
-        ##actions = [act for act, val in self.Q[state].items() if val == max_q]
+        optimal_actions = [action for action in self.valid_actions if self.Q[state][action] == max_q]
 
         if self.verbose:
             print("optimal action: {}".format(optimal_actions))
@@ -325,7 +325,8 @@ class LearningAgent(Agent):
         # When learning, choose a random action with 'epsilon' probability
         # Otherwise, choose an action with the highest Q-value for the current state
         # Be sure that when choosing an action with highest Q-value that you randomly select between actions that "tie".
-        if self.learning == False:
+        print(self.learning)
+        if not self.learning:
             ## 4 action uniformally distributed and randomly choose one
             action = np.random.choice(self.valid_actions)
         else:
@@ -352,19 +353,21 @@ class LearningAgent(Agent):
 
         # Q learning Q(S, A) ← Q(S, A) + α [R + γ max Q(S′, a) − Q(S, A)]
         # since gamma = 0.0 the Q learning simplified to Q(S, A) ← Q(S, A) + α [R  − Q(S, A)]
-        maxQ = self.get_maxQ(state)
+        # print(self.learning)
+        if self.learning:
+            maxQ = self.get_maxQ(state)
+            self.Q[state][action] += self.alpha * (reward - self.Q[state][action])
+            if self.verbose:
+                print("Q learning updating  state", state, " action", action, "Q value: ", self.Q[state][action])
 
-        self.Q[state][action] += self.alpha * (reward - self.Q[state][action])
-        if self.verbose:
-            print("Q learning updating  state", state, " action", action, "Q value: ", self.Q[state][action])
-
-        ## planning
-        ## what about other actions not chosen in this state. predict its value for future use
-        for act in self.valid_actions:
-            if act != action and self.Q[state][act] == 0.0 and len(self.Q) > 100:  ## enough data to predict
-                ## predict
-                # self.Q[state][act] = self.fit_and_predit_Linear(state, act)
-                self.Q[state][act] = self.fit_and_predit_DT(state, act)
+            ## planning
+            ## what about other actions not chosen in this state. predict its value for future use
+            for act in self.valid_actions:
+                if act != action and self.Q[state][act] == 0.0 and len(
+                        self.Q) > self.pred_thres:  ## 80% of the state seen
+                    ## predict
+                    # self.Q[state][act] = self.fit_and_predit_Linear(state, act)
+                    self.Q[state][act] = self.fit_and_predit_DT(state, act)
         return
 
     def update(self):
@@ -381,7 +384,7 @@ class LearningAgent(Agent):
         return
 
 
-def run():
+def run(learning, decay, optim=None):
     """ Driving function for running the simulation. 
         Press ESC to close the simulation, or [SPACE] to pause the simulation. """
 
@@ -399,7 +402,8 @@ def run():
     #   learning   - set to True to force the driving agent to use Q-learning
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
-    agent = env.create_agent(LearningAgent, learning=True, epsilon=1.0, alpha=0.5, epsilon_decay='exp')
+    #    *epsilon_decay - linear epsilon decay or sigmoid shaped epsilon decay
+    agent = env.create_agent(LearningAgent, learning, epsilon=1.0, alpha=0.5, epsilon_decay=decay)
 
     ##############
     # Follow the driving agent
@@ -414,15 +418,40 @@ def run():
     #   display      - set to False to disable the GUI if PyGame is enabled
     #   log_metrics  - set to True to log trial and simulation results to /logs
     #   optimized    - set to True to change the default log file name
-    sim = Simulator(env, update_delay=0.01, display=True, log_metrics=True, optimized=True)
+    sim = Simulator(env, update_delay=0.01, display=True, log_metrics=True, optimized=optim)
 
     ##############
     # Run the simulator
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(tolerance=0.02, n_test=20)
+    sim.run(tolerance=0.02, n_test=10)
 
 
-if __name__ == '__main__':
-    run()
+def str2bool(v):
+  return v.lower() in ("True","1")
+
+if __name__ == "__main__":
+    import argparse
+    import ast
+    parser = argparse.ArgumentParser(description='smartcar ')
+    parser.add_argument("-l", "-learning", dest="learning", action="store", default="False", help="True/1 or False/0 ")
+    parser.add_argument("-o", "--optimized", dest="optimized", action="store", default="False", help="True/1 or False/0 ")
+    args = parser.parse_args()
+
+    learning = ast.literal_eval(args.learning)
+    optimized = ast.literal_eval(args.optimized)
+    #print(learning,optimized)
+    if False == learning :
+        learning = None
+        optimized = None
+    elif False == optimized :
+        optimized = None
+
+    if True == optimized:
+        epsilon_decay = 'exp'
+    else:
+        epsilon_decay = 'linear'
+
+    print("learning flag ", learning, "optimized", optimized, "epsilon_decay function",epsilon_decay )
+    run(learning, epsilon_decay, optimized)
